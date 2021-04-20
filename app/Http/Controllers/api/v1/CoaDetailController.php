@@ -21,7 +21,7 @@ class CoaDetailController extends Controller
     {
         $chartOfAccountDetails = ChartOfAccountDetail::all();
 
-        return $this->success($chartOfAccountDetails, 'Data retrieved successfully');
+        return $this->success($chartOfAccountDetails, 'Data retrieved successfully.');
     }
 
     /**
@@ -59,7 +59,8 @@ class CoaDetailController extends Controller
                         'nomor_rincian_akun' => $i,
                         'nama_rincian_akun' => $attr['nama_rincian_akun'],
                     ]);
-                    return $this->success($chartOfAccountDetail, 'Data inserted successfully');
+
+                    return $this->success($chartOfAccountDetail, 'Data inserted successfully.');
                     break;
                 }
             }
@@ -71,7 +72,8 @@ class CoaDetailController extends Controller
                         'nomor_rincian_akun' => $i,
                         'nama_rincian_akun' => $attr['nama_rincian_akun'],
                     ]);
-                    return $this->success($chartOfAccountDetail, 'Data inserted successfully');
+
+                    return $this->success($chartOfAccountDetail, 'Data inserted successfully.');
                     break;
                 }
             }
@@ -88,7 +90,7 @@ class CoaDetailController extends Controller
     {
         $chartOfAccountDetail = ChartOfAccountDetail::findOrFail($coaDetail->id);
 
-        return $this->success($chartOfAccountDetail, 'Data with that id retrieved successfully');
+        return $this->success($chartOfAccountDetail, 'Data with that id retrieved successfully.');
     }
 
     /**
@@ -116,12 +118,12 @@ class CoaDetailController extends Controller
             'nama_rincian_akun' => 'required|string|max:255|unique:chart_of_account_details,nama_rincian_akun,' . $coaDetail->id
         ]);
 
-        $chartOfAccountDetail = ChartOfAccountDetail::firstOrFail('id', $coaDetail->id)->update([
+        $chartOfAccountDetail = ChartOfAccountDetail::where('id', $coaDetail->id)->update([
             'nomor_rincian_akun' => $attr['nomor_rincian_akun'],
             'nama_rincian_akun' => $attr['nama_rincian_akun'],
         ]);
 
-        return $this->success($attr, 'Data updated successfully');
+        return $this->success($attr, 'Data updated successfully.');
     }
 
     /**
@@ -132,8 +134,8 @@ class CoaDetailController extends Controller
      */
     public function destroy(ChartOfAccountDetail $coaDetail)
     {
-        $chartOfAccountDetail = ChartOfAccountDetail::firstOrFail('id', $coaDetail->id)->delete();
+        $chartOfAccountDetail = ChartOfAccountDetail::where('id', $coaDetail->id)->delete();
 
-        return $this->success(null, 'Data deleted successfully');
+        return $this->success(null, 'Data deleted successfully.');
     }
 }

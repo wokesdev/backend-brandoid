@@ -20,9 +20,9 @@ class ItemController extends Controller
      */
     public function index()
     {
-        $items = Item::all();
+        $items = Item::where('user_id', Auth::id())->get();
 
-        return $this->success($items, 'Data retrieved successfully');
+        return $this->success($items, 'Data retrieved successfully.');
     }
 
     /**
@@ -60,7 +60,7 @@ class ItemController extends Controller
             'stok' => $attr['stok'],
         ]);
 
-        return $this->success($itm, 'Data inserted successfully');
+        return $this->success($itm, 'Data inserted successfully.');
     }
 
     /**
@@ -71,9 +71,13 @@ class ItemController extends Controller
      */
     public function show(Item $item)
     {
+        if ($item->user_id !== Auth::id()) {
+            return $this->error('Access is not allowed.', 403);
+        }
+
         $itm = Item::findOrFail($item->id);
 
-        return $this->success($itm, 'Data with that id retrieved successfully');
+        return $this->success($itm, 'Data with that id retrieved successfully.');
     }
 
     /**
@@ -96,6 +100,10 @@ class ItemController extends Controller
      */
     public function update(Request $request, Item $item)
     {
+        if ($item->user_id !== Auth::id()) {
+            return $this->error('Access is not allowed.', 403);
+        }
+
         $attr = $request->validate([
             'nama_barang' => 'required|string|max:255',
             'kode_barang' => 'required|string|max:255|unique:items,kode_barang,' . $item->id,
@@ -104,7 +112,7 @@ class ItemController extends Controller
             'stok' => 'required|numeric'
         ]);
 
-        $itm = Item::firstOrFail('id', $item->id)->update([
+        $itm = Item::where('id', $item->id)->update([
             'nama_barang' => $attr['nama_barang'],
             'kode_barang' => $attr['kode_barang'],
             'harga_beli' => $attr['harga_beli'],
@@ -114,7 +122,7 @@ class ItemController extends Controller
 
         $attr = Arr::prepend($attr, Auth::id(), 'user_id');
 
-        return $this->success($attr, 'Data updated successfully');
+        return $this->success($attr, 'Data updated successfully.');
     }
 
     /**
@@ -125,8 +133,12 @@ class ItemController extends Controller
      */
     public function destroy(Item $item)
     {
-        $itm = Item::firstOrFail('id', $item->id)->delete();
+        if ($item->user_id !== Auth::id()) {
+            return $this->error('Access is not allowed.', 403);
+        }
 
-        return $this->success(null, 'Data deleted successfully');
+        $itm = Item::where('id', $item->id)->delete();
+
+        return $this->success(null, 'Data deleted successfully.');
     }
 }

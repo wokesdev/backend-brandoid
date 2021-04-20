@@ -20,7 +20,7 @@ class CoaController extends Controller
     {
         $chartOfAccounts = ChartOfAccount::all();
 
-        return $this->success($chartOfAccounts, 'Data retrieved successfully');
+        return $this->success($chartOfAccounts, 'Data retrieved successfully.');
     }
 
     /**
@@ -51,7 +51,7 @@ class CoaController extends Controller
             'nama_akun' => $attr['nama_akun']
         ]);
 
-        return $this->success($chartOfAccount, 'Data inserted successfully');
+        return $this->success($chartOfAccount, 'Data inserted successfully.');
     }
 
     /**
@@ -64,7 +64,7 @@ class CoaController extends Controller
     {
         $chartOfAccount = ChartOfAccount::findOrFail($coa->id);
 
-        return $this->success($chartOfAccount, 'Data with that id retrieved successfully');
+        return $this->success($chartOfAccount, 'Data with that id retrieved successfully.');
     }
 
     /**
@@ -92,12 +92,12 @@ class CoaController extends Controller
             'nama_akun' => 'required|string|max:255|unique:chart_of_accounts,nama_akun,' . $coa->id
         ]);
 
-        $chartOfAccount = ChartOfAccount::firstOrFail('id', $coa->id)->update([
+        $chartOfAccount = ChartOfAccount::where('id', $coa->id)->update([
             'nomor_akun' => $attr['nomor_akun'],
             'nama_akun' => $attr['nama_akun']
         ]);
 
-        return $this->success($attr, 'Data updated successfully');
+        return $this->success($attr, 'Data updated successfully.');
     }
 
     /**
@@ -108,8 +108,8 @@ class CoaController extends Controller
      */
     public function destroy(ChartOfAccount $coa)
     {
-        $chartOfAccount = ChartOfAccount::firstOrFail('id', $coa->id)->delete();
+        $chartOfAccount = ChartOfAccount::where('id', $coa->id)->delete();
 
-        return $this->success(null, 'Data deleted successfully');
+        return $this->success(null, 'Data deleted successfully.');
     }
 }

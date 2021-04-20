@@ -40,7 +40,7 @@ class AuthController extends Controller
         ]);
 
         if (!Auth::attempt($attr)) {
-            return $this->error('Credentials not match', 401);
+            return $this->error('Credentials not match.', 401);
         }
 
         return $this->success([
@@ -53,7 +53,7 @@ class AuthController extends Controller
         auth()->user()->tokens()->delete();
 
         return [
-            'message' => 'Tokens Revoked'
+            'message' => 'Tokens revoked.'
         ];
     }
 }

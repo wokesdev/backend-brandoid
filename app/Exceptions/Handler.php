@@ -48,15 +48,15 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $e)
     {
         if ($e instanceof ModelNotFoundException) {
-            return $this->error('No data with that id was found', 404);
+            return $this->error('No data with that id was found.', 404);
         }
 
         if ($e instanceof MethodNotAllowedHttpException) {
-            return $this->error('Method was not supported', 404);
+            return $this->error('Method was not supported.', 404);
         }
 
         if ($e instanceof NotFoundHttpException) {
-            return $this->error('Route was not found', 404);
+            return $this->error('Route was not found.', 404);
         }
 
         return parent::render($request, $e);

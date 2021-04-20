@@ -19,10 +19,19 @@ Route::namespace('api\v1')->prefix('v1')->group(function () {
     Route::post('/auth/login', 'AuthController@login');
 });
 
-Route::middleware('auth:sanctum')->namespace('api\v1')->prefix('v1')->group(function () {
+Route::middleware(['auth:sanctum', 'is.admin'])->namespace('api\v1')->prefix('v1')->group(function () {
     Route::resource('coa', 'CoaController')->except('create', 'edit');
     Route::resource('coa-detail', 'CoaDetailController')->except('create', 'edit');
+});
+
+Route::middleware('auth:sanctum')->namespace('api\v1')->prefix('v1')->group(function () {
+    Route::resource('coa', 'CoaController')->except('create', 'store', 'show', 'edit', 'update', 'destroy');
+    Route::resource('coa-detail', 'CoaDetailController')->except('create', 'store', 'show', 'edit', 'update', 'destroy');
     Route::resource('item', 'ItemController')->except('create', 'edit');
+    Route::resource('purchase', 'PurchaseController')->except('create', 'edit');
+    Route::resource('sale', 'SaleController')->except('create', 'edit');
+    Route::resource('cash-payment', 'CashPaymentController')->except('create', 'edit');
+    Route::resource('cash-receipt', 'CashReceiptController')->except('create', 'edit');
 
     Route::get('/me', function(Request $request) {
         return auth()->user();
