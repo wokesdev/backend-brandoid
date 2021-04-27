@@ -16,6 +16,7 @@ class CreateGeneralEntryDetailsTable extends Migration
         Schema::create('general_entry_details', function (Blueprint $table) {
             $table->id();
             $table->foreignId('general_entry_id')->nullable()->constrained('general_entries')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('coa_detail_id')->nullable()->constrained('chart_of_account_details')->onUpdate('cascade')->onDelete('set null');
             $table->integer('debit');
             $table->integer('kredit');
             $table->timestamps();

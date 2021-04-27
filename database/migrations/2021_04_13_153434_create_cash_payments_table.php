@@ -19,7 +19,7 @@ class CreateCashPaymentsTable extends Migration
             $table->foreignId('coa_detail_id')->nullable()->constrained('chart_of_account_details')->onUpdate('cascade')->onDelete('set null');
             $table->string('nomor_nota')->unique();
             $table->integer('nominal');
-            $table->text('keterangan');
+            $table->string('keterangan');
             $table->date('tanggal');
             $table->timestamps();
         });

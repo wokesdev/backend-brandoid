@@ -3,7 +3,11 @@
 namespace App\Http\Controllers\api\v1;
 
 use App\Http\Controllers\Controller;
+use App\Models\ChartOfAccountDetail;
+use App\Models\GeneralEntry;
+use App\Models\GeneralEntryDetail;
 use App\Models\Item;
+use App\Models\PurchaseDetail;
 use App\Models\Sale;
 use App\Models\SaleDetail;
 use App\Traits\ApiResponser;
@@ -14,38 +18,21 @@ use Illuminate\Support\Str;
 
 class SaleController extends Controller
 {
+    // Using ApiResponser's trait.
     use ApiResponser;
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        $sales = Sale::with('sale_details')->where('user_id', Auth::id())->get();
+        // Getting all sales along with sale's details and general entry.
+        $sales = Sale::with(['sale_details', 'general_entry'])->where('user_id', Auth::id())->get();
 
-        return $this->success($sales, 'Data retrieved successfully.');
+        // Returning success API response.
+        return $this->success($sales, 'All sales retrieved successfully.');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
+        // Validating incoming request.
         $attr = $request->validate([
             'rincian_akun_id' => 'required|numeric|exists:chart_of_account_details,id',
             'rincian_akun_pembayaran_id' => 'required|numeric|exists:chart_of_account_details,id',
@@ -56,17 +43,30 @@ class SaleController extends Controller
             'harga_satuan.*' => 'required|numeric',
         ]);
 
+        // Validating selected items for authenticated user.
         for($i = 0; $i < count((array) $attr['barang_id']); $i++)
         {
             $currentItem = Item::select('user_id')->where('id', $attr['barang_id'][$i])->first();
 
             if(Auth::id() !== $currentItem->user_id){
                 return $this->error('Access is not allowed.', 403);
-                break;
             }
         }
 
+        // Validating items' stocks.
+        for($i = 0; $i < count((array) $attr['barang_id']); $i++)
+        {
+            $currentItem = Item::select('id', 'nama_barang', 'stok')->where('id', $attr['barang_id'][$i])->first();
+            $qty = $attr['kuantitas'][$i];
+
+            if (!($qty <= $currentItem->stok)) {
+                return $this->error('Stok barang tidak cukup, stok ' . $currentItem->nama_barang . ' saat ini hanya ' . $currentItem->stok, 422);
+            }
+        }
+
+        // Beginning database transaction.
         $transaction = DB::transaction(function () use ($attr) {
+            // Creating new sale.
             $sale = Sale::create([
                 'user_id' => Auth::id(),
                 'coa_detail_id' => $attr['rincian_akun_id'],
@@ -77,6 +77,7 @@ class SaleController extends Controller
                 'tanggal' => $attr['tanggal'],
             ]);
 
+            // Creating new sale's details for the new sale and updating items' stock.
             $total = 0;
 
             for($i = 0; $i < count((array) $attr['barang_id']); $i++)
@@ -99,60 +100,72 @@ class SaleController extends Controller
                 $total += $subtotal;
             }
 
+            // Updating sale's number and amount for the new sale.
             $updateSale = Sale::where('id', $sale->id)->update([
                 'nomor_penjualan' => 'SL-' . Str::padLeft($sale->id, 5, '0'),
                 'total' => $total,
             ]);
 
-            $insertedSale = Sale::with('sale_details')->where('id', $sale->id)->get();
+            // Creating new general entry for the new sale.
+            $generalEntry = GeneralEntry::create([
+                'user_id' => Auth::id(),
+                'sale_id' => $sale->id,
+                'nomor_transaksi' => '',
+                'tanggal' => $attr['tanggal'],
+            ]);
+
+            // Updating transaction's number for the new general entry.
+            $updateGeneralEntry = GeneralEntry::where('id', $generalEntry->id)->update([
+                'nomor_transaksi' => $generalEntry->id,
+            ]);
+
+            // Creating new general entry's details for the new general entry.
+            $generalEntryDetailDebit = GeneralEntryDetail::create([
+                'general_entry_id' => $generalEntry->id,
+                'coa_detail_id' => $attr['rincian_akun_pembayaran_id'],
+                'debit' => $total,
+                'kredit' => 0,
+            ]);
+
+            $generalEntryDetailKredit = GeneralEntryDetail::create([
+                'general_entry_id' => $generalEntry->id,
+                'coa_detail_id' => $attr['rincian_akun_id'],
+                'debit' => 0,
+                'kredit' => $total,
+            ]);
+
+            // Getting and returning the new sale along with sale's details and general entry.
+            $insertedSale = Sale::with(['sale_details', 'general_entry'])->where('id', $sale->id)->get();
 
             return $insertedSale;
         });
 
-        return $this->success($transaction, 'Data inserted successfully.');
+        // Returning success API response.
+        return $this->success($transaction, 'Sale created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Sale  $sale
-     * @return \Illuminate\Http\Response
-     */
     public function show(Sale $sale)
     {
+        // Validating selected sale for authenticated user.
         if ($sale->user_id !== Auth::id()) {
            return $this->error('Access is not allowed.', 403);
         }
 
+        // Getting selected sale along with sale's details and general entry.
         $sle = Sale::with('sale_details')->where('id', $sale->id)->get();
 
-        return $this->success($sle, 'Data with that id retrieved successfully.');
+        // Returning success API response.
+        return $this->success($sle, 'Sale with that id retrieved successfully.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Sale  $sale
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Sale $sale)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Sale  $sale
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, Sale $sale)
     {
+        // Validating selected sale for authenticated user.
         if ($sale->user_id !== Auth::id()) {
             return $this->error('Access is not allowed.', 403);
         }
 
+        // Validating incoming request.
         $attr = $request->validate([
             'rincian_akun_id' => 'required|numeric|exists:chart_of_account_details,id',
             'rincian_akun_pembayaran_id' => 'required|numeric|exists:chart_of_account_details,id',
@@ -163,24 +176,38 @@ class SaleController extends Controller
             'harga_satuan.*' => 'required|numeric',
         ]);
 
+        // Validating selected items for authenticated user.
         for($i = 0; $i < count((array) $attr['barang_id']); $i++)
         {
             $currentItem = Item::select('user_id')->where('id', $attr['barang_id'][$i])->first();
 
             if(Auth::id() !== $currentItem->user_id){
                 return $this->error('Access is not allowed.', 403);
-                break;
             }
         }
 
+        // Validating items' stocks.
+        for($i = 0; $i < count((array) $attr['barang_id']); $i++)
+        {
+            $currentItem = Item::select('id', 'nama_barang', 'stok')->where('id', $attr['barang_id'][$i])->first();
+            $qty = $attr['kuantitas'][$i];
+
+            if (!($qty <= $currentItem->stok)) {
+                return $this->error('Stok barang tidak cukup, stok ' . $currentItem->nama_barang . ' saat ini hanya ' . $currentItem->stok, 422);
+            }
+        }
+
+        // Beginning database transaction.
         $transaction = DB::transaction(function () use ($attr, $sale) {
-            $sle = Sale::where('id', $sale->id)->update([
+            // Updating selected sale.
+            $updateSale = Sale::where('id', $sale->id)->update([
                 'coa_detail_id' => $attr['rincian_akun_id'],
                 'coa_detail_payment_id' => $attr['rincian_akun_pembayaran_id'],
                 'keterangan' => $attr['keterangan'],
                 'tanggal' => $attr['tanggal'],
             ]);
 
+            // Updating sale's details for selected sale and updating items' stock.
             $total = 0;
 
             for($i = 0; $i < count((array) $attr['barang_id']); $i++)
@@ -203,49 +230,68 @@ class SaleController extends Controller
                 $total += $subtotal;
             }
 
+            // Updating sale's amount for selected sale.
             $updateSale = Sale::where('id', $sale->id)->update([
                 'total' => $total,
             ]);
 
+            // Getting cash and stock from chart of account's detail.
+            $hppOnCoa = ChartOfAccountDetail::select('id')->where('nama_rincian_akun', 'Harga Pokok Penjualan')->first();
+            $stockOnCoa = ChartOfAccountDetail::select('id')->where('nama_rincian_akun', 'Persediaan Barang Dagang')->first();
+
+            // Updating general entry for selected sale.
+            $generalEntry = GeneralEntry::where('sale_id', $sale->id)->update([
+                'tanggal' => $attr['tanggal'],
+            ]);
+
+            // Updating general entry's details for selected sale.
+            $generalEntryDetailDebit = GeneralEntryDetail::where('sale_id', $sale->id)->where('kredit', 0)->where('chart_of_account_detail_id', '!=', $hppOnCoa->id)->update([
+                'coa_detail_id' => $attr['rincian_akun_pembayaran_id'],
+                'debit' => $total,
+            ]);
+
+            $generalEntryDetailKredit = GeneralEntryDetail::where('sale_id', $sale->id)->where('debit', 0)->where('chart_of_account_detail_id', '!=', $stockOnCoa->id)->update([
+                'coa_detail_id' => $attr['rincian_akun_id'],
+                'kredit' => $total,
+            ]);
+
+            // Getting and returning updated sale along with sale's details and general entry.
             $updatedSale = Sale::with('sale_details')->where('id', $sale->id)->get();
 
             return $updatedSale;
         });
 
-        return $this->success($transaction, 'Data updated successfully.');
+        // Returning success API response.
+        return $this->success($transaction, 'Sale updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Sale  $sale
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Sale $sale)
     {
+        // Validating selected sale for authenticated user.
         if ($sale->user_id !== Auth::id()) {
             return $this->error('Access is not allowed.', 403);
-         }
+        }
 
-         if (SaleDetail::where('sale_id', $sale->id)->count() !== 0) {
-             $currentSaleDetailCount = SaleDetail::where('sale_id', $sale->id)->count();
+        // Beginning database transaction.
+        $transaction = DB::transaction(function () use ($sale) {
+            // Counting number of sale's details for selected sale.
+            $currentSaleDetailCount = SaleDetail::where('sale_id', $sale->id)->count();
 
-             for ($i = 0; $i < $currentSaleDetailCount; $i++) {
-                 $currentSaleDetail = SaleDetail::select('item_id', 'kuantitas')->where('sale_id', $sale->id)->get();
-                 $currentItem = Item::select('stok')->where('id', $currentSaleDetail[$i]->item_id)->first();
+            // Updating items' stock.
+            for ($i = 0; $i < $currentSaleDetailCount; $i++) {
+                $currentSaleDetail = SaleDetail::select('item_id', 'kuantitas')->where('sale_id', $sale->id)->get();
+                $currentItem = Item::select('stok')->where('id', $currentSaleDetail[$i]->item_id)->first();
 
-                 $destroyStok = Item::where('id', $currentSaleDetail[$i]->item_id)->update([
-                     'stok' => $currentItem->stok + $currentSaleDetail[$i]->kuantitas,
-                 ]);
-             }
+                $updateStock = Item::where('id', $currentSaleDetail[$i]->item_id)->update([
+                    'stok' => $currentItem->stok + $currentSaleDetail[$i]->kuantitas,
+                ]);
+            }
 
-             if ($destroyStok) {
-                 $destroy = Sale::where('id', $sale->id)->delete();
-             }
-         } else if (SaleDetail::where('sale_id', $sale->id)->count() === 0) {
-             $destroy = Sale::where('id', $sale->id)->delete();
-         }
+            // Deleting selected sale.
+            $deleteSale = Sale::where('id', $sale->id)->delete();
+        });
 
-         return $this->success(null, 'Data deleted successfully.');
+        // Returning success API response
+        return $this->success(null, 'Sale deleted successfully.');
     }
 }

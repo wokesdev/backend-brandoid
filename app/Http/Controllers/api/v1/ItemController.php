@@ -6,43 +6,25 @@ use App\Http\Controllers\Controller;
 use App\Models\Item;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 
 class ItemController extends Controller
 {
+    // Using ApiResponser's trait.
     use ApiResponser;
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
+        // Getting all items.
         $items = Item::where('user_id', Auth::id())->get();
 
-        return $this->success($items, 'Data retrieved successfully.');
+        // Returning success API reseponse.
+        return $this->success($items, 'All items retrieved successfully.');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
+        // Validating incoming request.
         $attr = $request->validate([
             'nama_barang' => 'required|string|max:255',
             'kode_barang' => 'required|string|max:255|unique:items,kode_barang',
@@ -51,7 +33,8 @@ class ItemController extends Controller
             'stok' => 'required|numeric'
         ]);
 
-        $itm = Item::create([
+        // Creating new item.
+        $item = Item::create([
             'user_id' => Auth::id(),
             'nama_barang' => $attr['nama_barang'],
             'kode_barang' => $attr['kode_barang'],
@@ -60,50 +43,32 @@ class ItemController extends Controller
             'stok' => $attr['stok'],
         ]);
 
-        return $this->success($itm, 'Data inserted successfully.');
+        // Returning success API response.
+        return $this->success($item, 'Item created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Item  $item
-     * @return \Illuminate\Http\Response
-     */
     public function show(Item $item)
     {
+        // Validating selected item for authenticated user.
         if ($item->user_id !== Auth::id()) {
             return $this->error('Access is not allowed.', 403);
         }
 
-        $itm = Item::findOrFail($item->id);
+        // Getting selected item.
+        $currentItem = Item::findOrFail($item->id);
 
-        return $this->success($itm, 'Data with that id retrieved successfully.');
+        // Returning success API response.
+        return $this->success($currentItem, 'Item with that id retrieved successfully.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Item  $item
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Item $item)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Item  $item
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, Item $item)
     {
+        // Validating selected item for authenticated user.
         if ($item->user_id !== Auth::id()) {
             return $this->error('Access is not allowed.', 403);
         }
 
+        // Validating incoming request.
         $attr = $request->validate([
             'nama_barang' => 'required|string|max:255',
             'kode_barang' => 'required|string|max:255|unique:items,kode_barang,' . $item->id,
@@ -112,7 +77,8 @@ class ItemController extends Controller
             'stok' => 'required|numeric'
         ]);
 
-        $itm = Item::where('id', $item->id)->update([
+        // Updating selected item.
+        $updateItem = Item::where('id', $item->id)->update([
             'nama_barang' => $attr['nama_barang'],
             'kode_barang' => $attr['kode_barang'],
             'harga_beli' => $attr['harga_beli'],
@@ -120,25 +86,21 @@ class ItemController extends Controller
             'stok' => $attr['stok'],
         ]);
 
-        $attr = Arr::prepend($attr, Auth::id(), 'user_id');
-
-        return $this->success($attr, 'Data updated successfully.');
+        // Returning success API response.
+        return $this->success($attr, 'Item updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Item  $item
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Item $item)
     {
+        // Validating selected item for authenticated user.
         if ($item->user_id !== Auth::id()) {
             return $this->error('Access is not allowed.', 403);
         }
 
-        $itm = Item::where('id', $item->id)->delete();
+        // Deleting selected item.
+        $deleteItem = Item::where('id', $item->id)->delete();
 
-        return $this->success(null, 'Data deleted successfully.');
+        // Returning success API response.
+        return $this->success(null, 'Item deleted successfully.');
     }
 }

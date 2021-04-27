@@ -20,6 +20,7 @@ class CreatePurchaseDetailsTable extends Migration
             $table->integer('kuantitas');
             $table->integer('harga_satuan');
             $table->integer('subtotal');
+            $table->integer('stok');
             $table->timestamps();
         });
     }

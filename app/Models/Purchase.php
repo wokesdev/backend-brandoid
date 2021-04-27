@@ -20,4 +20,9 @@ class Purchase extends Model
     {
         return $this->hasMany(PurchaseDetail::class, 'purchase_id');
     }
+
+    public function general_entry()
+    {
+        return $this->hasOne(GeneralEntry::class, 'purchase_id');
+    }
 }

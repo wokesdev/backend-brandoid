@@ -15,4 +15,9 @@ class CashReceipt extends Model
     {
         return $this->belongsTo(ChartOfAccountDetail::class, 'coa_detail_id');
     }
+
+    public function general_entry()
+    {
+        return $this->hasOne(GeneralEntry::class, 'cash_receipt_id');
+    }
 }

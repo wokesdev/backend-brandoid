@@ -9,107 +9,69 @@ use Illuminate\Http\Request;
 
 class CoaController extends Controller
 {
+    // Using ApiResponser's traits.
     use ApiResponser;
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
+        // Getting all chart of accounts.
         $chartOfAccounts = ChartOfAccount::all();
 
-        return $this->success($chartOfAccounts, 'Data retrieved successfully.');
+        // Returning success API response.
+        return $this->success($chartOfAccounts, 'All chart of accounts retrieved successfully.');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
+        // Validating incoming request.
         $attr = $request->validate([
             'nomor_akun' => 'required|numeric|digits_between:1,4|unique:chart_of_accounts,nomor_akun',
             'nama_akun' => 'required|string|max:255|unique:chart_of_accounts,nama_akun'
         ]);
 
+        // Creating new chart of account.
         $chartOfAccount = ChartOfAccount::create([
             'nomor_akun' => $attr['nomor_akun'],
             'nama_akun' => $attr['nama_akun']
         ]);
 
-        return $this->success($chartOfAccount, 'Data inserted successfully.');
+        // Returning success API response.
+        return $this->success($chartOfAccount, 'Chart of account created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\ChartOfAccount  $coa
-     * @return \Illuminate\Http\Response
-     */
     public function show(ChartOfAccount $coa)
     {
-        $chartOfAccount = ChartOfAccount::findOrFail($coa->id);
+        // Getting selected chart of account.
+        $currentChartOfAccount = ChartOfAccount::findOrFail($coa->id);
 
-        return $this->success($chartOfAccount, 'Data with that id retrieved successfully.');
+        // Returning success API response.
+        return $this->success($currentChartOfAccount, 'Chart of account with that id retrieved successfully.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\ChartOfAccount  $coa
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(ChartOfAccount $coa)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\ChartOfAccount  $coa
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, ChartOfAccount $coa)
     {
+        // Validating incoming request.
         $attr = $request->validate([
             'nomor_akun' => 'required|numeric|digits_between:1,4|unique:chart_of_accounts,nomor_akun,' . $coa->id,
             'nama_akun' => 'required|string|max:255|unique:chart_of_accounts,nama_akun,' . $coa->id
         ]);
 
-        $chartOfAccount = ChartOfAccount::where('id', $coa->id)->update([
+        // Updating selected chart of account.
+        $updateChartOfAccount = ChartOfAccount::where('id', $coa->id)->update([
             'nomor_akun' => $attr['nomor_akun'],
             'nama_akun' => $attr['nama_akun']
         ]);
 
-        return $this->success($attr, 'Data updated successfully.');
+        // Returning success API response.
+        return $this->success($attr, 'Chart of account updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\ChartOfAccount  $coa
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(ChartOfAccount $coa)
     {
-        $chartOfAccount = ChartOfAccount::where('id', $coa->id)->delete();
+        // Deleting selected chart of account.
+        $deleteChartOfAccount = ChartOfAccount::where('id', $coa->id)->delete();
 
-        return $this->success(null, 'Data deleted successfully.');
+        // Returning success API response.
+        return $this->success(null, 'Chart of account deleted successfully.');
     }
 }

@@ -22,6 +22,7 @@ class CreateGeneralEntriesTable extends Migration
             $table->foreignId('cash_receipt_id')->nullable()->constrained('cash_receipts')->onUpdate('cascade')->onDelete('cascade');
             $table->string('nomor_transaksi')->unique();
             $table->date('tanggal');
+            $table->string('keterangan')->nullable();
             $table->timestamps();
         });
     }

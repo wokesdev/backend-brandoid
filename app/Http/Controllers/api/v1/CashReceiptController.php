@@ -4,6 +4,9 @@ namespace App\Http\Controllers\api\v1;
 
 use App\Http\Controllers\Controller;
 use App\Models\CashReceipt;
+use App\Models\ChartOfAccountDetail;
+use App\Models\GeneralEntry;
+use App\Models\GeneralEntryDetail;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,38 +14,21 @@ use Illuminate\Support\Facades\DB;
 
 class CashReceiptController extends Controller
 {
+    // Using ApiResponser's trait.
     use ApiResponser;
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        $cashReceipts = CashReceipt::where('user_id', Auth::id())->get();
+        // Getting all cash receipts along with cash receipt's general entry.
+        $cashReceipts = CashReceipt::with('general_entry')->where('user_id', Auth::id())->get();
 
-        return $this->success($cashReceipts, 'Data retrieved successfully.');
+        // Returning success API response.
+        return $this->success($cashReceipts, 'All cash receipts retrieved successfully.');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
+        // Validating incoming request.
         $attr = $request->validate([
             'rincian_akun_id' => 'required|numeric|exists:chart_of_account_details,id',
             'tanggal' => 'required|date',
@@ -50,8 +36,10 @@ class CashReceiptController extends Controller
             'nominal' => 'required|numeric',
         ]);
 
+        // Beginning database transaction.
         $transaction = DB::transaction(function () use ($attr) {
-            $cshReceipt = CashReceipt::create([
+            // Creating new cash receipt.
+            $cashReceipt = CashReceipt::create([
                 'user_id' => Auth::id(),
                 'coa_detail_id' => $attr['rincian_akun_id'],
                 'nomor_nota' => '',
@@ -60,59 +48,73 @@ class CashReceiptController extends Controller
                 'tanggal' => $attr['tanggal'],
             ]);
 
-            $updateCashReceipt = CashReceipt::where('id', $cshReceipt->id)->update([
-                'nomor_nota' => $cshReceipt->id,
+            // Updating cash receipt's note number for the new cash receipt.
+            $updateCashReceipt = CashReceipt::where('id', $cashReceipt->id)->update([
+                'nomor_nota' => $cashReceipt->id,
             ]);
 
-            $insertedCashReceipt = CashReceipt::where('id', $cshReceipt->id)->get();
+            // Getting cash from chart of account's detail.
+            $cashOnCoa = ChartOfAccountDetail::select('id')->where('nama_rincian_akun', 'Kas')->first();
+
+            // Creating new general entry for the new cash receipt.
+            $generalEntry = GeneralEntry::create([
+                'user_id' => Auth::id(),
+                'cash_receipt_id' => $cashReceipt->id,
+                'nomor_transaksi' => '',
+                'tanggal' => $attr['tanggal'],
+            ]);
+
+            // Updating transaction's number for the new general entry.
+            $updateGeneralEntry = GeneralEntry::where('id', $generalEntry->id)->update([
+                'nomor_transaksi' => $generalEntry->id,
+            ]);
+
+            // Creating new general entry's details for the new general entry.
+            $generalEntryDetailDebit = GeneralEntryDetail::create([
+                'general_entry_id' => $generalEntry->id,
+                'coa_detail_id' => $attr['rincian_akun_id'],
+                'debit' => $attr['nominal'],
+                'kredit' => 0,
+            ]);
+
+            $generalEntryDetailKredit = GeneralEntryDetail::create([
+                'general_entry_id' => $generalEntry->id,
+                'coa_detail_id' => $cashOnCoa->id,
+                'debit' => 0,
+                'kredit' => $attr['nominal'],
+            ]);
+
+            $insertedCashReceipt = CashReceipt::with('general_entry')->where('id', $cashReceipt->id)->get();
 
             return $insertedCashReceipt;
         });
 
-        return $this->success($transaction, 'Data inserted successfully.');
+        // Returning success API response.
+        return $this->success($transaction, 'Cash receipt created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\CashReceipt  $cashReceipt
-     * @return \Illuminate\Http\Response
-     */
     public function show(CashReceipt $cashReceipt)
     {
+        // Validating selected cash receipt for authenticated user.
         if ($cashReceipt->user_id !== Auth::id()) {
             return $this->error('Access is not allowed.', 403);
         }
 
-        $cshReceipt = CashReceipt::findOrFail($cashReceipt->id);
+        // Getting selected cash receipt along with cash receipt's general entry.
+        $currentCashReceipt = CashReceipt::findOrFail($cashReceipt->id);
 
-        return $this->success($cshReceipt, 'Data with that id retrieved successfully.');
+        // Returning success API response.
+        return $this->success($currentCashReceipt, 'Data with that id retrieved successfully.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\CashReceipt  $cashReceipt
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(CashReceipt $cashReceipt)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\CashReceipt  $cashReceipt
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, CashReceipt $cashReceipt)
     {
+        // Validating selected cash payment for authenticated user.
         if ($cashReceipt->user_id !== Auth::id()) {
             return $this->error('Access is not allowed.', 403);
         }
 
+        // Validating incoming request.
         $attr = $request->validate([
             'rincian_akun_id' => 'required|numeric|exists:chart_of_account_details,id',
             'tanggal' => 'required|date',
@@ -120,36 +122,52 @@ class CashReceiptController extends Controller
             'nominal' => 'required|numeric',
         ]);
 
+        // Beginning database transaction.
         $transaction = DB::transaction(function () use ($attr, $cashReceipt) {
-            $cshReceipt = CashReceipt::where('id', $cashReceipt->id)->update([
+            // Updating selected cash receipt.
+            $updateCashReceipt = CashReceipt::where('id', $cashReceipt->id)->update([
                 'coa_detail_id' => $attr['rincian_akun_id'],
                 'nominal' => $attr['nominal'],
                 'keterangan' => $attr['keterangan'],
                 'tanggal' => $attr['tanggal'],
             ]);
 
+            // Updating general entry for selected cash receipt.
+            $generalEntry = GeneralEntry::where('cash_receipt_id', $cashReceipt->id)->update([
+                'tanggal' => $attr['tanggal'],
+            ]);
+
+            // Updating general entry's details for selected cash receipt.
+            $generalEntryDetailDebit = GeneralEntryDetail::where('cash_receipt_id', $cashReceipt->id)->where('kredit', 0)->update([
+                'coa_detail_id' => $attr['rincian_akun_id'],
+                'debit' => $attr['nominal'],
+            ]);
+
+            $generalEntryDetailKredit = GeneralEntryDetail::where('cash_receipt_id', $cashReceipt->id)->where('debit', 0)->update([
+                'kredit' => $attr['nominal'],
+            ]);
+
+            // Getting and returning updated cash receipt along with cash payment's general entry.
             $updatedCashReceipt = CashReceipt::where('id', $cashReceipt->id)->get();
 
             return $updatedCashReceipt;
         });
 
+        // Returning success API response.
         return $this->success($transaction, 'Data updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\CashReceipt  $cashReceipt
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(CashReceipt $cashReceipt)
     {
+        // Validating selected cash payment for authenticated user.
         if ($cashReceipt->user_id !== Auth::id()) {
             return $this->error('Access is not allowed.', 403);
         }
 
-        $cshReceipt = CashReceipt::where('id', $cashReceipt->id)->delete();
+        // Deleting seleted cash payment.
+        $deleteCashReceipt = CashReceipt::where('id', $cashReceipt->id)->delete();
 
+        // Returning success API response.
         return $this->success(null, 'Data deleted successfully.');
     }
 }
