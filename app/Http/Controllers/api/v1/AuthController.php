@@ -63,4 +63,11 @@ class AuthController extends Controller
         // Returning success API response.
         return $this->success(null, 'Logout successful, tokens already revoked.');
     }
+
+    public function profile()
+    {
+        $user = auth()->user();
+
+        return $this->success($user, 'User profile retrieved successfully.');
+    }
 }

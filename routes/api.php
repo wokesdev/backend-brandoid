@@ -38,9 +38,7 @@ Route::middleware('auth:sanctum')->namespace('api\v1')->prefix('v1')->group(func
     Route::post('/income-statement', 'IncomeStatementController@filterDate');
     Route::post('/income-statement/print', 'IncomeStatementController@printReport');
 
-    Route::get('/me', function(Request $request) {
-        return auth()->user();
-    });
+    Route::get('/me', 'AuthController@profile');
 
     Route::post('/auth/logout', 'AuthController@logout');
 });
