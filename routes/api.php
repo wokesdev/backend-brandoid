@@ -22,6 +22,8 @@ Route::namespace('api\v1')->prefix('v1')->group(function () {
 Route::middleware(['auth:sanctum', 'is.admin'])->namespace('api\v1')->prefix('v1')->group(function () {
     Route::resource('/coa', 'CoaController')->except('create', 'edit');
     Route::resource('/coa-detail', 'CoaDetailController')->except('create', 'edit');
+
+    Route::get('/user-count', 'DashboardController@userCount');
 });
 
 Route::middleware('auth:sanctum')->namespace('api\v1')->prefix('v1')->group(function () {
