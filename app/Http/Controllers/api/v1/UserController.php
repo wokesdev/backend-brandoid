@@ -4,10 +4,14 @@ namespace App\Http\Controllers\api\v1;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    // Using ApiResponser's trait.
+    use ApiResponser;
+
     public function index()
     {
         // Getting all users.

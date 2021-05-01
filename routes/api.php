@@ -22,7 +22,7 @@ Route::namespace('api\v1')->prefix('v1')->group(function () {
 Route::middleware(['auth:sanctum', 'is.admin'])->namespace('api\v1')->prefix('v1')->group(function () {
     Route::resource('/coa', 'CoaController')->except('create', 'edit');
     Route::resource('/coa-detail', 'CoaDetailController')->except('create', 'edit');
-    Route::resource('user', 'UserController')->except('create', 'store', 'show', 'edit');
+    Route::resource('/user', 'UserController')->except('create', 'store', 'show', 'edit');
 
     Route::get('/user-count', 'DashboardController@userCount');
 });
