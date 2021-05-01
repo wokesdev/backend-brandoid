@@ -30,6 +30,8 @@ Route::middleware(['auth:sanctum', 'is.admin'])->namespace('api\v1')->prefix('v1
     Route::put('/user-unban-user/{user}', 'UserController@unbanUser');
 
     Route::get('/user-count', 'DashboardController@userCount');
+    Route::get('/admin-count', 'DashboardController@adminCount');
+    Route::get('/banned-count', 'DashboardController@bannedCount');
 });
 
 Route::middleware('auth:sanctum')->namespace('api\v1')->prefix('v1')->group(function () {
