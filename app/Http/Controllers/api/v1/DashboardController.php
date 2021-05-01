@@ -15,9 +15,9 @@ class DashboardController extends Controller
     public function userCount()
     {
         // Counting total user, except admin.
-        $users = User::where('is_admin', '!=', '1')->count();
+        $users = User::where('is_admin', null)->count();
 
         // Returning success API response.
-        return $this->success($users, 'Users counted sucessfully.');
+        return $this->success($users, 'Users was counted sucessfully.');
     }
 }

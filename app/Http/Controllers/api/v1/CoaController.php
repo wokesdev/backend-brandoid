@@ -18,7 +18,7 @@ class CoaController extends Controller
         $chartOfAccounts = ChartOfAccount::all();
 
         // Returning success API response.
-        return $this->success($chartOfAccounts, 'All chart of accounts retrieved successfully.');
+        return $this->success($chartOfAccounts, 'All chart of accounts was retrieved successfully.');
     }
 
     public function store(Request $request)
@@ -36,7 +36,7 @@ class CoaController extends Controller
         ]);
 
         // Returning success API response.
-        return $this->success($chartOfAccount, 'Chart of account created successfully.');
+        return $this->success($chartOfAccount, 'Chart of account was created successfully.');
     }
 
     public function show(ChartOfAccount $coa)
@@ -45,7 +45,7 @@ class CoaController extends Controller
         $currentChartOfAccount = ChartOfAccount::findOrFail($coa->id);
 
         // Returning success API response.
-        return $this->success($currentChartOfAccount, 'Chart of account with that id retrieved successfully.');
+        return $this->success($currentChartOfAccount, 'Chart of account with that id was retrieved successfully.');
     }
 
     public function update(Request $request, ChartOfAccount $coa)
@@ -63,7 +63,7 @@ class CoaController extends Controller
         ]);
 
         // Returning success API response.
-        return $this->success($attr, 'Chart of account updated successfully.');
+        return $this->success($attr, 'Chart of account was updated successfully.');
     }
 
     public function destroy(ChartOfAccount $coa)
@@ -72,6 +72,6 @@ class CoaController extends Controller
         $deleteChartOfAccount = ChartOfAccount::where('id', $coa->id)->delete();
 
         // Returning success API response.
-        return $this->success(null, 'Chart of account deleted successfully.');
+        return $this->success(null, 'Chart of account was deleted successfully.');
     }
 }

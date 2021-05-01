@@ -19,7 +19,7 @@ class ItemController extends Controller
         $items = Item::where('user_id', Auth::id())->get();
 
         // Returning success API reseponse.
-        return $this->success($items, 'All items retrieved successfully.');
+        return $this->success($items, 'All items was retrieved successfully.');
     }
 
     public function store(Request $request)
@@ -44,28 +44,28 @@ class ItemController extends Controller
         ]);
 
         // Returning success API response.
-        return $this->success($item, 'Item created successfully.');
+        return $this->success($item, 'Item was created successfully.');
     }
 
     public function show(Item $item)
     {
         // Validating selected item for authenticated user.
         if ($item->user_id !== Auth::id()) {
-            return $this->error('Access is not allowed.', 403);
+            return $this->error('Access was not allowed.', 403);
         }
 
         // Getting selected item.
         $currentItem = Item::findOrFail($item->id);
 
         // Returning success API response.
-        return $this->success($currentItem, 'Item with that id retrieved successfully.');
+        return $this->success($currentItem, 'Item with that id was retrieved successfully.');
     }
 
     public function update(Request $request, Item $item)
     {
         // Validating selected item for authenticated user.
         if ($item->user_id !== Auth::id()) {
-            return $this->error('Access is not allowed.', 403);
+            return $this->error('Access was not allowed.', 403);
         }
 
         // Validating incoming request.
@@ -87,20 +87,20 @@ class ItemController extends Controller
         ]);
 
         // Returning success API response.
-        return $this->success($attr, 'Item updated successfully.');
+        return $this->success($attr, 'Item was updated successfully.');
     }
 
     public function destroy(Item $item)
     {
         // Validating selected item for authenticated user.
         if ($item->user_id !== Auth::id()) {
-            return $this->error('Access is not allowed.', 403);
+            return $this->error('Access was not allowed.', 403);
         }
 
         // Deleting selected item.
         $deleteItem = Item::where('id', $item->id)->delete();
 
         // Returning success API response.
-        return $this->success(null, 'Item deleted successfully.');
+        return $this->success(null, 'Item was deleted successfully.');
     }
 }

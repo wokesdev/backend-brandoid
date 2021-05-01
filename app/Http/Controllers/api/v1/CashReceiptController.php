@@ -23,7 +23,7 @@ class CashReceiptController extends Controller
         $cashReceipts = CashReceipt::with('general_entry')->where('user_id', Auth::id())->get();
 
         // Returning success API response.
-        return $this->success($cashReceipts, 'All cash receipts retrieved successfully.');
+        return $this->success($cashReceipts, 'All cash receipts was retrieved successfully.');
     }
 
     public function store(Request $request)
@@ -90,28 +90,28 @@ class CashReceiptController extends Controller
         });
 
         // Returning success API response.
-        return $this->success($transaction, 'Cash receipt created successfully.');
+        return $this->success($transaction, 'Cash receipt was created successfully.');
     }
 
     public function show(CashReceipt $cashReceipt)
     {
         // Validating selected cash receipt for authenticated user.
         if ($cashReceipt->user_id !== Auth::id()) {
-            return $this->error('Access is not allowed.', 403);
+            return $this->error('Access was not allowed.', 403);
         }
 
         // Getting selected cash receipt along with cash receipt's general entry.
         $currentCashReceipt = CashReceipt::findOrFail($cashReceipt->id);
 
         // Returning success API response.
-        return $this->success($currentCashReceipt, 'Data with that id retrieved successfully.');
+        return $this->success($currentCashReceipt, 'Data with that id was retrieved successfully.');
     }
 
     public function update(Request $request, CashReceipt $cashReceipt)
     {
         // Validating selected cash payment for authenticated user.
         if ($cashReceipt->user_id !== Auth::id()) {
-            return $this->error('Access is not allowed.', 403);
+            return $this->error('Access was not allowed.', 403);
         }
 
         // Validating incoming request.
@@ -154,20 +154,20 @@ class CashReceiptController extends Controller
         });
 
         // Returning success API response.
-        return $this->success($transaction, 'Data updated successfully.');
+        return $this->success($transaction, 'Data updated was successfully.');
     }
 
     public function destroy(CashReceipt $cashReceipt)
     {
         // Validating selected cash payment for authenticated user.
         if ($cashReceipt->user_id !== Auth::id()) {
-            return $this->error('Access is not allowed.', 403);
+            return $this->error('Access was not allowed.', 403);
         }
 
         // Deleting seleted cash payment.
         $deleteCashReceipt = CashReceipt::where('id', $cashReceipt->id)->delete();
 
         // Returning success API response.
-        return $this->success(null, 'Data deleted successfully.');
+        return $this->success(null, 'Data deleted was successfully.');
     }
 }

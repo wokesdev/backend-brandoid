@@ -23,7 +23,7 @@ class CashPaymentController extends Controller
         $cashPayments = CashPayment::with('general_entry')->where('user_id', Auth::id())->get();
 
         // Returning success API response.
-        return $this->success($cashPayments, 'All cash payments retrieved successfully.');
+        return $this->success($cashPayments, 'All cash payments was retrieved successfully.');
     }
 
     public function store(Request $request)
@@ -91,28 +91,28 @@ class CashPaymentController extends Controller
         });
 
         // Returning success API response.
-        return $this->success($transaction, 'Cash payment created successfully.');
+        return $this->success($transaction, 'Cash payment was created successfully.');
     }
 
     public function show(CashPayment $cashPayment)
     {
         // Validating selected cash payment for authenticated user.
         if ($cashPayment->user_id !== Auth::id()) {
-            return $this->error('Access is not allowed.', 403);
+            return $this->error('Access was not allowed.', 403);
         }
 
         // Getting selected cash payment along with cash payment's general entry.
         $currentCashPayment = CashPayment::with('general_entry')->where($cashPayment->id);
 
         // Returning success API response.
-        return $this->success($currentCashPayment, 'Cash payment with that id retrieved successfully.');
+        return $this->success($currentCashPayment, 'Cash payment with that id was retrieved successfully.');
     }
 
     public function update(Request $request, CashPayment $cashPayment)
     {
         // Validating selected cash payment for authenticated user.
         if ($cashPayment->user_id !== Auth::id()) {
-            return $this->error('Access is not allowed.', 403);
+            return $this->error('Access was not allowed.', 403);
         }
 
         // Validating incoming request.
@@ -155,20 +155,20 @@ class CashPaymentController extends Controller
         });
 
         // Returning success API response.
-        return $this->success($transaction, 'Cash payment updated successfully.');
+        return $this->success($transaction, 'Cash payment was updated successfully.');
     }
 
     public function destroy(CashPayment $cashPayment)
     {
         // Validating selected cash payment for authenticated user.
         if ($cashPayment->user_id !== Auth::id()) {
-            return $this->error('Access is not allowed.', 403);
+            return $this->error('Access was not allowed.', 403);
         }
 
         // Deleting seleted cash payment.
         $deleteCashPayment = CashPayment::where('id', $cashPayment->id)->delete();
 
         // Returning success API response.
-        return $this->success(null, 'Cash payment deleted successfully.');
+        return $this->success(null, 'Cash payment was deleted successfully.');
     }
 }

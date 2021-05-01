@@ -19,7 +19,7 @@ class CoaDetailController extends Controller
         $chartOfAccountDetails = ChartOfAccountDetail::all();
 
         // Returning success API response.
-        return $this->success($chartOfAccountDetails, "All chart of account's details retrieved successfully.");
+        return $this->success($chartOfAccountDetails, "All chart of account's details was retrieved successfully.");
     }
 
     public function store(Request $request)
@@ -47,7 +47,7 @@ class CoaDetailController extends Controller
                     ]);
 
                     // Returning success API response.
-                    return $this->success($chartOfAccountDetail, "Chart of account's detail created successfully.");
+                    return $this->success($chartOfAccountDetail, "Chart of account's detail was created successfully.");
 
                     // Break out from the loop.
                     break;
@@ -64,7 +64,7 @@ class CoaDetailController extends Controller
                     ]);
 
                     // Returning success API response.
-                    return $this->success($chartOfAccountDetail, "Chart of account's detail created successfully.");
+                    return $this->success($chartOfAccountDetail, "Chart of account's detail was created successfully.");
 
                     // Break out from the loop.
                     break;
@@ -79,7 +79,7 @@ class CoaDetailController extends Controller
         $currentChartOfAccountDetail = ChartOfAccountDetail::findOrFail($coaDetail->id);
 
         // Returning success API response.
-        return $this->success($currentChartOfAccountDetail, "Chart of account's detail with that id retrieved successfully.");
+        return $this->success($currentChartOfAccountDetail, "Chart of account's detail with that id was retrieved successfully.");
     }
 
     public function update(Request $request, ChartOfAccountDetail $coaDetail)
@@ -106,6 +106,6 @@ class CoaDetailController extends Controller
         $deleteChartOfAccountDetail = ChartOfAccountDetail::where('id', $coaDetail->id)->delete();
 
         // Returning success API response.
-        return $this->success(null, "Chart of account's detail deleted successfully.");
+        return $this->success(null, "Chart of account's detail was deleted successfully.");
     }
 }

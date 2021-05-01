@@ -33,7 +33,7 @@ class AuthController extends Controller
         // Returning success API response and creating API Auth Token for the bew registered user.
         return $this->success([
             'token' => $user->createToken('API Auth Token')->plainTextToken
-        ], 'User created successfully.');
+        ], 'User was created successfully.');
     }
 
     public function login(Request $request)
@@ -52,7 +52,7 @@ class AuthController extends Controller
         // Returning success API response and creating API Auth Token for the authenticated user.
         return $this->success([
             'token' => auth()->user()->createToken('API Auth Token')->plainTextToken
-        ], 'Login successful.');
+        ], 'Login was successful.');
     }
 
     public function logout()
@@ -61,13 +61,13 @@ class AuthController extends Controller
         $deleteToken = auth()->user()->tokens()->delete();
 
         // Returning success API response.
-        return $this->success(null, 'Logout successful, tokens already revoked.');
+        return $this->success(null, 'Logout was successful, tokens already revoked.');
     }
 
     public function profile()
     {
         $user = auth()->user();
 
-        return $this->success($user, 'User profile retrieved successfully.');
+        return $this->success($user, 'User profile was retrieved successfully.');
     }
 }

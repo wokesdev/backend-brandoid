@@ -21,7 +21,7 @@ class GeneralEntryController extends Controller
         $generalEntries = GeneralEntry::with('general_entry_details')->where('user_id', Auth::id())->get();;
 
         // Returning success API response.
-        return $this->success($generalEntries, 'All general entries retrieved successfully.');
+        return $this->success($generalEntries, 'All general entries was retrieved successfully.');
     }
 
     public function store(Request $request)
@@ -73,28 +73,28 @@ class GeneralEntryController extends Controller
         });
 
         // Returning success API response.
-        return $this->success($transaction, 'General entry created successfully.');
+        return $this->success($transaction, 'General entry was created successfully.');
     }
 
     public function show(GeneralEntry $generalEntry)
     {
         // Validating selected general entry for authenticated user.
         if ($generalEntry->user_id !== Auth::id()) {
-            return $this->error('Access is not allowed.', 403);
+            return $this->error('Access was not allowed.', 403);
         }
 
         // Getting selected general entry along with general entry's details.
         $gnrlEntry = GeneralEntry::with('general_entry_details')->where('id', $generalEntry->id)->get();
 
         // Returning success API response.
-        return $this->success($gnrlEntry, 'General entry with that id retrieved successfully.');
+        return $this->success($gnrlEntry, 'General entry with that id was retrieved successfully.');
     }
 
     public function update(Request $request, GeneralEntry $generalEntry)
     {
         // Validating selected general entry for authenticated user.
         if ($generalEntry->user_id !== Auth::id()) {
-            return $this->error('Access is not allowed.', 403);
+            return $this->error('Access was not allowed.', 403);
         }
 
         // Validating incoming request.
@@ -133,20 +133,20 @@ class GeneralEntryController extends Controller
         });
 
         // Returning success API response.
-        return $this->success($transaction, 'General entry updated successfully.');
+        return $this->success($transaction, 'General entry was updated successfully.');
     }
 
     public function destroy(GeneralEntry $generalEntry)
     {
         // Validating selected general entry for authenticated user.
         if ($generalEntry->user_id !== Auth::id()) {
-            return $this->error('Access is not allowed.', 403);
+            return $this->error('Access was not allowed.', 403);
          }
 
          // Deleting selected general entry.
          $deleteGeneralEntry = GeneralEntry::where('id', $generalEntry->id)->delete();
 
          // Returning success API response.
-         return $this->success(null, 'General entry deleted successfully.');
+         return $this->success(null, 'General entry was deleted successfully.');
     }
 }

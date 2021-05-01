@@ -76,7 +76,7 @@ class IncomeStatementController extends Controller
             'laba_bersih' => $labaBersih,
             'from_date' => $fromDate,
             'to_date' => $toDate
-        ], 'All income statements retrieved successfully.');
+        ], 'All income statements was retrieved successfully.');
     }
 
     public function filterDate(Request $request)
@@ -195,7 +195,7 @@ class IncomeStatementController extends Controller
             'laba_bersih' => $labaBersih,
             'from_date' => $fromDate,
             'to_date' => $toDate
-        ], 'All income statements retrieved successfully.');
+        ], 'All income statements was retrieved successfully.');
     }
 
     public function printReport(Request $request)

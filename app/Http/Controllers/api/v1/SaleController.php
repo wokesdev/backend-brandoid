@@ -27,7 +27,7 @@ class SaleController extends Controller
         $sales = Sale::with(['sale_details', 'general_entry'])->where('user_id', Auth::id())->get();
 
         // Returning success API response.
-        return $this->success($sales, 'All sales retrieved successfully.');
+        return $this->success($sales, 'All sales was retrieved successfully.');
     }
 
     public function store(Request $request)
@@ -49,7 +49,7 @@ class SaleController extends Controller
             $currentItem = Item::select('user_id')->where('id', $attr['barang_id'][$i])->first();
 
             if(Auth::id() !== $currentItem->user_id){
-                return $this->error('Access is not allowed.', 403);
+                return $this->error('Access was not allowed.', 403);
             }
         }
 
@@ -60,7 +60,7 @@ class SaleController extends Controller
             $qty = $attr['kuantitas'][$i];
 
             if (!($qty <= $currentItem->stok)) {
-                return $this->error('Stok barang tidak cukup, stok ' . $currentItem->nama_barang . ' saat ini hanya ' . $currentItem->stok, 422);
+                return $this->error('Stock is not enough, stock for ' . $currentItem->nama_barang . ' is only ' . $currentItem->stok, 422);
             }
         }
 
@@ -141,28 +141,28 @@ class SaleController extends Controller
         });
 
         // Returning success API response.
-        return $this->success($transaction, 'Sale created successfully.');
+        return $this->success($transaction, 'Sale was created successfully.');
     }
 
     public function show(Sale $sale)
     {
         // Validating selected sale for authenticated user.
         if ($sale->user_id !== Auth::id()) {
-           return $this->error('Access is not allowed.', 403);
+           return $this->error('Access was not allowed.', 403);
         }
 
         // Getting selected sale along with sale's details and general entry.
         $sle = Sale::with('sale_details')->where('id', $sale->id)->get();
 
         // Returning success API response.
-        return $this->success($sle, 'Sale with that id retrieved successfully.');
+        return $this->success($sle, 'Sale with that id was retrieved successfully.');
     }
 
     public function update(Request $request, Sale $sale)
     {
         // Validating selected sale for authenticated user.
         if ($sale->user_id !== Auth::id()) {
-            return $this->error('Access is not allowed.', 403);
+            return $this->error('Access was not allowed.', 403);
         }
 
         // Validating incoming request.
@@ -182,7 +182,7 @@ class SaleController extends Controller
             $currentItem = Item::select('user_id')->where('id', $attr['barang_id'][$i])->first();
 
             if(Auth::id() !== $currentItem->user_id){
-                return $this->error('Access is not allowed.', 403);
+                return $this->error('Access was not allowed.', 403);
             }
         }
 
@@ -193,7 +193,7 @@ class SaleController extends Controller
             $qty = $attr['kuantitas'][$i];
 
             if (!($qty <= $currentItem->stok)) {
-                return $this->error('Stok barang tidak cukup, stok ' . $currentItem->nama_barang . ' saat ini hanya ' . $currentItem->stok, 422);
+                return $this->error('Stock is not enough, stock for ' . $currentItem->nama_barang . ' is only ' . $currentItem->stok, 422);
             }
         }
 
@@ -262,14 +262,14 @@ class SaleController extends Controller
         });
 
         // Returning success API response.
-        return $this->success($transaction, 'Sale updated successfully.');
+        return $this->success($transaction, 'Sale was updated successfully.');
     }
 
     public function destroy(Sale $sale)
     {
         // Validating selected sale for authenticated user.
         if ($sale->user_id !== Auth::id()) {
-            return $this->error('Access is not allowed.', 403);
+            return $this->error('Access was not allowed.', 403);
         }
 
         // Beginning database transaction.
@@ -292,6 +292,6 @@ class SaleController extends Controller
         });
 
         // Returning success API response
-        return $this->success(null, 'Sale deleted successfully.');
+        return $this->success(null, 'Sale was deleted successfully.');
     }
 }

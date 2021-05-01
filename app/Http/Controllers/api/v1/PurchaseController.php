@@ -25,7 +25,7 @@ class PurchaseController extends Controller
         $purchases = Purchase::with(['purchase_details', 'general_entry'])->where('user_id', Auth::id())->get();
 
         // Returning success API response.
-        return $this->success($purchases, 'All purchases retrieved successfully.');
+        return $this->success($purchases, 'All purchases was retrieved successfully.');
     }
 
     public function store(Request $request)
@@ -47,7 +47,7 @@ class PurchaseController extends Controller
             $currentItem = Item::select('user_id')->where('id', $attr['barang_id'][$i])->first();
 
             if(Auth::id() !== $currentItem->user_id){
-                return $this->error('Access is not allowed.', 403);
+                return $this->error('Access was not allowed.', 403);
             }
         }
 
@@ -129,14 +129,14 @@ class PurchaseController extends Controller
         });
 
         // Returning success API response.
-        return $this->success($transaction, 'Purchase created successfully.');
+        return $this->success($transaction, 'Purchase was created successfully.');
     }
 
     public function show(Purchase $purchase)
     {
         // Validating selected purchase for authenticated user.
         if ($purchase->user_id !== Auth::id()) {
-           return $this->error('Access is not allowed.', 403);
+           return $this->error('Access was not allowed.', 403);
         }
 
         // Getting selected purchase along with purchase's details and general entry.
@@ -150,7 +150,7 @@ class PurchaseController extends Controller
     {
         // Validating selected purchase for authenticated user.
         if ($purchase->user_id !== Auth::id()) {
-            return $this->error('Access is not allowed.', 403);
+            return $this->error('Access was not allowed.', 403);
         }
 
         // Validating incoming request.
@@ -170,7 +170,7 @@ class PurchaseController extends Controller
             $currentItem = Item::select('user_id')->where('id', $attr['barang_id'][$i])->first();
 
             if(Auth::id() !== $currentItem->user_id){
-                return $this->error('Access is not allowed.', 403);
+                return $this->error('Access was not allowed.', 403);
             }
         }
 
@@ -246,14 +246,14 @@ class PurchaseController extends Controller
         });
 
         // Returning success API response.
-        return $this->success($transaction, 'Purchase updated successfully.');
+        return $this->success($transaction, 'Purchase was updated successfully.');
     }
 
     public function destroy(Purchase $purchase)
     {
         // Validating selected purchase for authenticated user.
         if ($purchase->user_id !== Auth::id()) {
-           return $this->error('Access is not allowed.', 403);
+           return $this->error('Access was not allowed.', 403);
         }
 
         // Beginning database transaction.
@@ -276,6 +276,6 @@ class PurchaseController extends Controller
         });
 
         // Returning success API response.
-        return $this->success(null, 'Purchase deleted successfully.');
+        return $this->success(null, 'Purchase was deleted successfully.');
     }
 }
