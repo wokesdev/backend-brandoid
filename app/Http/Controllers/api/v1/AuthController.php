@@ -49,6 +49,10 @@ class AuthController extends Controller
             return $this->error('Credentials not match.', 401);
         }
 
+        if (auth()->user()->is_banned == 1) {
+            return $this->error('Your account was banned, please contact administrator for details.', 401);
+        }
+
         // Returning success API response and creating API Auth Token for the authenticated user.
         return $this->success([
             'token' => auth()->user()->createToken('API Auth Token')->plainTextToken
