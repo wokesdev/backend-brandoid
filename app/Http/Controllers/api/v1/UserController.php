@@ -21,18 +21,29 @@ class UserController extends Controller
         return $this->success($users, 'All users was retrieved successfully.');
     }
 
-    public function update(Request $request, User $user)
+    public function makeAdmin(Request $request, User $user)
     {
-        // Unbanning selected user.
-        $unbanUser = User::where('id', $user->id)->update([
-            'is_banned' => null
+        // Giving admin privilege selected user.
+        $makeAdmin = User::where('id', $user->id)->update([
+            'is_admin' => true
         ]);
 
         // Returning success API response.
-        return $this->success(null, 'User was unbanned successfully.');
+        return $this->success(null, 'Admin privilege was successfully given to the user.');
     }
 
-    public function destroy(User $user)
+    public function removeAdmin(Request $request, User $user)
+    {
+        // Removing admin privilege to selected user.
+        $removeAdmin = User::where('id', $user->id)->update([
+            'is_admin' => null
+        ]);
+
+        // Returning success API response.
+        return $this->success(null, 'Admin privilege was successfully removed from the user.');
+    }
+
+    public function banUser(Request $request, User $user)
     {
         // Banning selected user.
         $banUser = User::where('id', $user->id)->update([
@@ -41,5 +52,16 @@ class UserController extends Controller
 
         // Returning success API response.
         return $this->success(null, 'User was banned successfully.');
+    }
+
+    public function unbanUser(Request $request, User $user)
+    {
+        // Unbanning selected user.
+        $unbanUser = User::where('id', $user->id)->update([
+            'is_banned' => null
+        ]);
+
+        // Returning success API response.
+        return $this->success(null, 'User was unbanned successfully.');
     }
 }

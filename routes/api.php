@@ -22,7 +22,12 @@ Route::namespace('api\v1')->prefix('v1')->group(function () {
 Route::middleware(['auth:sanctum', 'is.admin'])->namespace('api\v1')->prefix('v1')->group(function () {
     Route::resource('/coa', 'CoaController')->except('create', 'edit');
     Route::resource('/coa-detail', 'CoaDetailController')->except('create', 'edit');
-    Route::resource('/user', 'UserController')->except('create', 'store', 'show', 'edit');
+
+    Route::get('/user', 'UserController@index');
+    Route::put('/user-make-admin/{user}', 'UserController@makeAdmin');
+    Route::put('/user-remove-admin/{user}', 'UserController@removeAdmin');
+    Route::put('/user-ban-user/{user}', 'UserController@banUser');
+    Route::put('/user-unban-user/{user}', 'UserController@unbanUser');
 
     Route::get('/user-count', 'DashboardController@userCount');
 });
