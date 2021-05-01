@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -15,7 +16,7 @@ class UserController extends Controller
     public function index()
     {
         // Getting all users.
-        $users = User::all();
+        $users = User::where('id', '!=', Auth::id())->get();
 
         // Returning success API response.
         return $this->success($users, 'All users was retrieved successfully.');
