@@ -10,4 +10,9 @@ class ChartOfAccount extends Model
     use HasFactory;
 
     protected $guarded = [];
+
+    public function coa_details()
+    {
+        return $this->hasMany(ChartOfAccountDetail::class, 'chart_of_account_id');
+    }
 }
