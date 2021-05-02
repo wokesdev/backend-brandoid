@@ -46,7 +46,7 @@ class PurchaseController extends Controller
         {
             $currentItem = Item::select('user_id')->where('id', $attr['barang_id'][$i])->first();
 
-            if(Auth::id() !== $currentItem->user_id){
+            if(Auth::id() != $currentItem->user_id){
                 return $this->error('Access was not allowed.', 403);
             }
         }
@@ -135,7 +135,7 @@ class PurchaseController extends Controller
     public function show(Purchase $purchase)
     {
         // Validating selected purchase for authenticated user.
-        if ($purchase->user_id !== Auth::id()) {
+        if ($purchase->user_id != Auth::id()) {
            return $this->error('Access was not allowed.', 403);
         }
 
@@ -149,7 +149,7 @@ class PurchaseController extends Controller
     public function update(Request $request, Purchase $purchase)
     {
         // Validating selected purchase for authenticated user.
-        if ($purchase->user_id !== Auth::id()) {
+        if ($purchase->user_id != Auth::id()) {
             return $this->error('Access was not allowed.', 403);
         }
 
@@ -169,7 +169,7 @@ class PurchaseController extends Controller
         {
             $currentItem = Item::select('user_id')->where('id', $attr['barang_id'][$i])->first();
 
-            if(Auth::id() !== $currentItem->user_id){
+            if(Auth::id() != $currentItem->user_id){
                 return $this->error('Access was not allowed.', 403);
             }
         }
@@ -252,7 +252,7 @@ class PurchaseController extends Controller
     public function destroy(Purchase $purchase)
     {
         // Validating selected purchase for authenticated user.
-        if ($purchase->user_id !== Auth::id()) {
+        if ($purchase->user_id != Auth::id()) {
            return $this->error('Access was not allowed.', 403);
         }
 

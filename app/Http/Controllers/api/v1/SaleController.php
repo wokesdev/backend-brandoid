@@ -48,7 +48,7 @@ class SaleController extends Controller
         {
             $currentItem = Item::select('user_id')->where('id', $attr['barang_id'][$i])->first();
 
-            if(Auth::id() !== $currentItem->user_id){
+            if(Auth::id() != $currentItem->user_id){
                 return $this->error('Access was not allowed.', 403);
             }
         }
@@ -147,7 +147,7 @@ class SaleController extends Controller
     public function show(Sale $sale)
     {
         // Validating selected sale for authenticated user.
-        if ($sale->user_id !== Auth::id()) {
+        if ($sale->user_id != Auth::id()) {
            return $this->error('Access was not allowed.', 403);
         }
 
@@ -161,7 +161,7 @@ class SaleController extends Controller
     public function update(Request $request, Sale $sale)
     {
         // Validating selected sale for authenticated user.
-        if ($sale->user_id !== Auth::id()) {
+        if ($sale->user_id != Auth::id()) {
             return $this->error('Access was not allowed.', 403);
         }
 
@@ -181,7 +181,7 @@ class SaleController extends Controller
         {
             $currentItem = Item::select('user_id')->where('id', $attr['barang_id'][$i])->first();
 
-            if(Auth::id() !== $currentItem->user_id){
+            if(Auth::id() != $currentItem->user_id){
                 return $this->error('Access was not allowed.', 403);
             }
         }
@@ -268,7 +268,7 @@ class SaleController extends Controller
     public function destroy(Sale $sale)
     {
         // Validating selected sale for authenticated user.
-        if ($sale->user_id !== Auth::id()) {
+        if ($sale->user_id != Auth::id()) {
             return $this->error('Access was not allowed.', 403);
         }
 

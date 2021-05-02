@@ -79,7 +79,7 @@ class GeneralEntryController extends Controller
     public function show(GeneralEntry $generalEntry)
     {
         // Validating selected general entry for authenticated user.
-        if ($generalEntry->user_id !== Auth::id()) {
+        if ($generalEntry->user_id != Auth::id()) {
             return $this->error('Access was not allowed.', 403);
         }
 
@@ -93,7 +93,7 @@ class GeneralEntryController extends Controller
     public function update(Request $request, GeneralEntry $generalEntry)
     {
         // Validating selected general entry for authenticated user.
-        if ($generalEntry->user_id !== Auth::id()) {
+        if ($generalEntry->user_id != Auth::id()) {
             return $this->error('Access was not allowed.', 403);
         }
 
@@ -139,7 +139,7 @@ class GeneralEntryController extends Controller
     public function destroy(GeneralEntry $generalEntry)
     {
         // Validating selected general entry for authenticated user.
-        if ($generalEntry->user_id !== Auth::id()) {
+        if ($generalEntry->user_id != Auth::id()) {
             return $this->error('Access was not allowed.', 403);
          }
 

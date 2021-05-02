@@ -97,7 +97,7 @@ class CashPaymentController extends Controller
     public function show(CashPayment $cashPayment)
     {
         // Validating selected cash payment for authenticated user.
-        if ($cashPayment->user_id !== Auth::id()) {
+        if ($cashPayment->user_id != Auth::id()) {
             return $this->error('Access was not allowed.', 403);
         }
 
@@ -111,7 +111,7 @@ class CashPaymentController extends Controller
     public function update(Request $request, CashPayment $cashPayment)
     {
         // Validating selected cash payment for authenticated user.
-        if ($cashPayment->user_id !== Auth::id()) {
+        if ($cashPayment->user_id != Auth::id()) {
             return $this->error('Access was not allowed.', 403);
         }
 
@@ -161,7 +161,7 @@ class CashPaymentController extends Controller
     public function destroy(CashPayment $cashPayment)
     {
         // Validating selected cash payment for authenticated user.
-        if ($cashPayment->user_id !== Auth::id()) {
+        if ($cashPayment->user_id != Auth::id()) {
             return $this->error('Access was not allowed.', 403);
         }
 

@@ -96,7 +96,7 @@ class CashReceiptController extends Controller
     public function show(CashReceipt $cashReceipt)
     {
         // Validating selected cash receipt for authenticated user.
-        if ($cashReceipt->user_id !== Auth::id()) {
+        if ($cashReceipt->user_id != Auth::id()) {
             return $this->error('Access was not allowed.', 403);
         }
 
@@ -110,7 +110,7 @@ class CashReceiptController extends Controller
     public function update(Request $request, CashReceipt $cashReceipt)
     {
         // Validating selected cash payment for authenticated user.
-        if ($cashReceipt->user_id !== Auth::id()) {
+        if ($cashReceipt->user_id != Auth::id()) {
             return $this->error('Access was not allowed.', 403);
         }
 
@@ -160,7 +160,7 @@ class CashReceiptController extends Controller
     public function destroy(CashReceipt $cashReceipt)
     {
         // Validating selected cash payment for authenticated user.
-        if ($cashReceipt->user_id !== Auth::id()) {
+        if ($cashReceipt->user_id != Auth::id()) {
             return $this->error('Access was not allowed.', 403);
         }
 
