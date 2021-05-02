@@ -50,7 +50,7 @@ class ItemController extends Controller
     public function show(Item $item)
     {
         // Validating selected item for authenticated user.
-        if ($item->user_id !== Auth::id()) {
+        if ($item->user_id != Auth::id()) {
             return $this->error('Access was not allowed.', 403);
         }
 
