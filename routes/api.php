@@ -19,23 +19,8 @@ Route::namespace('api\v1')->prefix('v1')->group(function () {
     Route::post('/auth/login', 'AuthController@login');
 });
 
-Route::middleware(['auth:sanctum', 'is.admin'])->namespace('api\v1')->prefix('v1')->group(function () {
-    Route::resource('/coa', 'CoaController')->except('create', 'edit');
-    Route::resource('/coa-detail', 'CoaDetailController')->except('create', 'edit');
-
-    Route::get('/user', 'UserController@index');
-    Route::put('/user-make-admin/{user}', 'UserController@makeAdmin');
-    Route::put('/user-remove-admin/{user}', 'UserController@removeAdmin');
-    Route::put('/user-ban-user/{user}', 'UserController@banUser');
-    Route::put('/user-unban-user/{user}', 'UserController@unbanUser');
-
-    Route::get('/user-count', 'DashboardController@userCount');
-    Route::get('/admin-count', 'DashboardController@adminCount');
-    Route::get('/banned-count', 'DashboardController@bannedCount');
-});
-
 Route::middleware('auth:sanctum')->namespace('api\v1')->prefix('v1')->group(function () {
-    Route::resource('/coa', 'CoaController')->except('create', 'store', 'show', 'edit', 'update', 'destroy');
+    Route::resource('/coa', 'CoaController')->except('create', 'store', 'edit', 'update', 'destroy');
     Route::resource('/item', 'ItemController')->except('create', 'edit');
     Route::resource('/purchase', 'PurchaseController')->except('create', 'edit');
     Route::resource('/sale', 'SaleController')->except('create', 'edit');
@@ -55,4 +40,19 @@ Route::middleware('auth:sanctum')->namespace('api\v1')->prefix('v1')->group(func
     Route::get('/me', 'AuthController@profile');
 
     Route::post('/auth/logout', 'AuthController@logout');
+});
+
+Route::middleware(['auth:sanctum', 'is.admin'])->namespace('api\v1')->prefix('v1')->group(function () {
+    Route::resource('/coa', 'CoaController')->except('create', 'edit');
+    Route::resource('/coa-detail', 'CoaDetailController')->except('create', 'edit');
+
+    Route::get('/user', 'UserController@index');
+    Route::put('/user-make-admin/{user}', 'UserController@makeAdmin');
+    Route::put('/user-remove-admin/{user}', 'UserController@removeAdmin');
+    Route::put('/user-ban-user/{user}', 'UserController@banUser');
+    Route::put('/user-unban-user/{user}', 'UserController@unbanUser');
+
+    Route::get('/user-count', 'DashboardController@userCount');
+    Route::get('/admin-count', 'DashboardController@adminCount');
+    Route::get('/banned-count', 'DashboardController@bannedCount');
 });
