@@ -49,6 +49,7 @@ class AuthController extends Controller
             return $this->error('Credentials not match.', 401);
         }
 
+        // Checking whether the user is banned or no.
         if (auth()->user()->is_banned == 1) {
             return $this->error('Your account was banned, please contact administrator for details.', 401);
         }

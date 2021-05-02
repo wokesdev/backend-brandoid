@@ -48,6 +48,11 @@ Route::middleware('auth:sanctum')->namespace('api\v1')->prefix('v1')->group(func
     Route::post('/income-statement', 'IncomeStatementController@filterDate');
     Route::post('/income-statement/print', 'IncomeStatementController@printReport');
 
+    Route::get('/purchase-count', 'DashboardController@purchaseCount');
+    Route::get('/sale-count', 'DashboardController@saleCount');
+    Route::get('/cash-payment-count', 'DashboardController@cashPaymentCount');
+    Route::get('/cash-receipt-count', 'DashboardController@cashReceiptCount');
+
     Route::get('/me', 'AuthController@profile');
 
     Route::post('/auth/logout', 'AuthController@logout');
