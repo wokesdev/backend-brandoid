@@ -42,7 +42,7 @@ class CoaController extends Controller
     public function show(ChartOfAccount $coa)
     {
         // Getting selected chart of account.
-        $currentChartOfAccount = ChartOfAccount::with('coa_details')->get();
+        $currentChartOfAccount = ChartOfAccount::with('coa_details')->where('id', $coa->id)->get();
 
         // Returning success API response.
         return $this->success($currentChartOfAccount, 'Chart of account with that id was retrieved successfully.');
