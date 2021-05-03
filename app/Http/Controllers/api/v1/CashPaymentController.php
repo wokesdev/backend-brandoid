@@ -20,7 +20,7 @@ class CashPaymentController extends Controller
     public function index()
     {
         // Getting all cash payments along with cash payment's general entry.
-        $cashPayments = CashPayment::with('general_entry')->where('user_id', Auth::id())->get();
+        $cashPayments = CashPayment::with(['coa_detail', 'general_entry'])->where('user_id', Auth::id())->get();
 
         // Returning success API response.
         return $this->success($cashPayments, 'All cash payments was retrieved successfully.');
@@ -85,7 +85,7 @@ class CashPaymentController extends Controller
             ]);
 
             // Getting and returning the new cash payment along with cash payment's general entry.
-            $insertedCashPayment = CashPayment::with('general_entry')->where('id', $cashPayment->id)->get();
+            $insertedCashPayment = CashPayment::with(['coa_detail', 'general_entry'])->where('id', $cashPayment->id)->get();
 
             return $insertedCashPayment;
         });
@@ -102,7 +102,7 @@ class CashPaymentController extends Controller
         }
 
         // Getting selected cash payment along with cash payment's general entry.
-        $currentCashPayment = CashPayment::with('general_entry')->where($cashPayment->id);
+        $currentCashPayment = CashPayment::with(['coa_detail', 'general_entry'])->where($cashPayment->id)->get();
 
         // Returning success API response.
         return $this->success($currentCashPayment, 'Cash payment with that id was retrieved successfully.');
@@ -149,7 +149,7 @@ class CashPaymentController extends Controller
             ]);
 
             // Getting and returning updated cash payment along with cash payment's general entry.
-            $updatedCashPayment = CashPayment::with('general_entry')->where('id', $cashPayment->id)->get();
+            $updatedCashPayment = CashPayment::with(['coa_detail', 'general_entry'])->where('id', $cashPayment->id)->get();
 
             return $updatedCashPayment;
         });

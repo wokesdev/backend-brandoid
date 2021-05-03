@@ -123,7 +123,7 @@ class PurchaseController extends Controller
             ]);
 
             // Getting and returning the new purchase along with purchase's details and general entry.
-            $insertedPurchase = Purchase::with(['purchase_details', 'general_entry'])->where('id', $purchase->id)->get();
+            $insertedPurchase = Purchase::with(['coa_detail', 'coa_detail_payment', 'purchase_details', 'general_entry'])->where('id', $purchase->id)->get();
 
             return $insertedPurchase;
         });
@@ -140,7 +140,7 @@ class PurchaseController extends Controller
         }
 
         // Getting selected purchase along with purchase's details and general entry.
-        $prchase = Purchase::with(['coa_detail', 'coa_detail_payment', 'purchase_details', 'general_entry'])->where('id', $purchase->id)->get();
+        $prchase = Purchase::with(['coa_detail', 'coa_detail_payment', 'purchase_details.item', 'general_entry'])->where('id', $purchase->id)->get();
 
         // Returning success API response.
         return $this->success($prchase, 'Purchase with that id retrieved successfully.');
@@ -240,7 +240,7 @@ class PurchaseController extends Controller
             ]);
 
             // Getting and returning updated purchase along with purchase's details and general entry.
-            $updatedPurchase = Purchase::with(['purchase_details', 'general_entry'])->where('id', $purchase->id)->get();
+            $updatedPurchase = Purchase::with(['coa_detail', 'coa_detail_payment', 'purchase_details', 'general_entry'])->where('id', $purchase->id)->get();
 
             return $updatedPurchase;
         });

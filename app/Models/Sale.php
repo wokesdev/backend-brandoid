@@ -16,6 +16,11 @@ class Sale extends Model
         return $this->belongsTo(ChartOfAccountDetail::class, 'coa_detail_id');
     }
 
+    public function coa_detail_payment()
+    {
+        return $this->belongsTo(ChartOfAccountDetail::class, 'coa_detail_payment_id');
+    }
+
     public function sale_details()
     {
         return $this->hasMany(SaleDetail::class, 'sale_id');

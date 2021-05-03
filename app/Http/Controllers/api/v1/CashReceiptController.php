@@ -20,7 +20,7 @@ class CashReceiptController extends Controller
     public function index()
     {
         // Getting all cash receipts along with cash receipt's general entry.
-        $cashReceipts = CashReceipt::with('general_entry')->where('user_id', Auth::id())->get();
+        $cashReceipts = CashReceipt::with(['coa_detail', 'general_entry'])->where('user_id', Auth::id())->get();
 
         // Returning success API response.
         return $this->success($cashReceipts, 'All cash receipts was retrieved successfully.');
@@ -84,7 +84,7 @@ class CashReceiptController extends Controller
                 'kredit' => $attr['nominal'],
             ]);
 
-            $insertedCashReceipt = CashReceipt::with('general_entry')->where('id', $cashReceipt->id)->get();
+            $insertedCashReceipt = CashReceipt::with(['coa_detail', 'general_entry'])->where('id', $cashReceipt->id)->get();
 
             return $insertedCashReceipt;
         });
@@ -101,7 +101,7 @@ class CashReceiptController extends Controller
         }
 
         // Getting selected cash receipt along with cash receipt's general entry.
-        $currentCashReceipt = CashReceipt::findOrFail($cashReceipt->id);
+        $currentCashReceipt = CashReceipt::with(['coa_detail', 'general_entry'])->where($cashReceipt->id)->get();
 
         // Returning success API response.
         return $this->success($currentCashReceipt, 'Data with that id was retrieved successfully.');
@@ -148,7 +148,7 @@ class CashReceiptController extends Controller
             ]);
 
             // Getting and returning updated cash receipt along with cash payment's general entry.
-            $updatedCashReceipt = CashReceipt::where('id', $cashReceipt->id)->get();
+            $updatedCashReceipt = CashReceipt::with(['coa_detail', 'general_entry'])->where('id', $cashReceipt->id)->get();
 
             return $updatedCashReceipt;
         });

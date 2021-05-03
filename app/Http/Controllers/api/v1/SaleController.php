@@ -24,7 +24,7 @@ class SaleController extends Controller
     public function index()
     {
         // Getting all sales along with sale's details and general entry.
-        $sales = Sale::with(['sale_details', 'general_entry'])->where('user_id', Auth::id())->get();
+        $sales = Sale::with(['coa_detail', 'coa_detail_payment', 'sale_details', 'general_entry'])->where('user_id', Auth::id())->get();
 
         // Returning success API response.
         return $this->success($sales, 'All sales was retrieved successfully.');
@@ -135,7 +135,7 @@ class SaleController extends Controller
             ]);
 
             // Getting and returning the new sale along with sale's details and general entry.
-            $insertedSale = Sale::with(['sale_details', 'general_entry'])->where('id', $sale->id)->get();
+            $insertedSale = Sale::with(['coa_detail', 'coa_detail_payment', 'sale_details', 'general_entry'])->where('id', $sale->id)->get();
 
             return $insertedSale;
         });
@@ -152,7 +152,7 @@ class SaleController extends Controller
         }
 
         // Getting selected sale along with sale's details and general entry.
-        $sle = Sale::with('sale_details')->where('id', $sale->id)->get();
+        $sle = Sale::with(['coa_detail', 'coa_detail_payment', 'sale_details', 'general_entry'])->where('id', $sale->id)->get();
 
         // Returning success API response.
         return $this->success($sle, 'Sale with that id was retrieved successfully.');
@@ -256,7 +256,7 @@ class SaleController extends Controller
             ]);
 
             // Getting and returning updated sale along with sale's details and general entry.
-            $updatedSale = Sale::with('sale_details')->where('id', $sale->id)->get();
+            $updatedSale = Sale::with(['coa_detail', 'coa_detail_payment', 'sale_details', 'general_entry'])->where('id', $sale->id)->get();
 
             return $updatedSale;
         });
