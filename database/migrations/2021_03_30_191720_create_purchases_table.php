@@ -18,7 +18,7 @@ class CreatePurchasesTable extends Migration
             $table->foreignId('user_id')->nullable()->constrained('users')->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('coa_detail_id')->nullable()->constrained('chart_of_account_details')->onUpdate('cascade')->onDelete('set null');
             $table->foreignId('coa_detail_payment_id')->nullable()->constrained('chart_of_account_details')->onUpdate('cascade')->onDelete('set null');
-            $table->string('nomor_pembelian')->unique();
+            $table->string('nomor_pembelian');
             $table->integer('total');
             $table->string('keterangan');
             $table->date('tanggal');

@@ -16,6 +16,11 @@ class Purchase extends Model
         return $this->belongsTo(ChartOfAccountDetail::class, 'coa_detail_id');
     }
 
+    public function coa_detail_payment()
+    {
+        return $this->belongsTo(ChartOfAccountDetail::class, 'coa_detail_payment_id');
+    }
+
     public function purchase_details()
     {
         return $this->hasMany(PurchaseDetail::class, 'purchase_id');

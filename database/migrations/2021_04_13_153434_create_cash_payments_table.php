@@ -17,7 +17,7 @@ class CreateCashPaymentsTable extends Migration
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained('users')->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('coa_detail_id')->nullable()->constrained('chart_of_account_details')->onUpdate('cascade')->onDelete('set null');
-            $table->string('nomor_nota')->unique();
+            $table->string('nomor_nota');
             $table->integer('nominal');
             $table->string('keterangan');
             $table->date('tanggal');

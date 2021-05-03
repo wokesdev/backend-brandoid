@@ -17,7 +17,7 @@ class CreateItemsTable extends Migration
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained('users')->onUpdate('cascade')->onDelete('cascade');
             $table->string('nama_barang');
-            $table->string('kode_barang')->unique();
+            $table->string('kode_barang');
             $table->integer('harga_beli');
             $table->integer('harga_jual');
             $table->integer('stok');

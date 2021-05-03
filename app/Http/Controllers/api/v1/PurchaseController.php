@@ -140,7 +140,7 @@ class PurchaseController extends Controller
         }
 
         // Getting selected purchase along with purchase's details and general entry.
-        $prchase = Purchase::with(['purchase_details', 'general_entry'])->where('id', $purchase->id)->get();
+        $prchase = Purchase::with(['coa_detail', 'coa_detail_payment', 'purchase_details', 'general_entry'])->where('id', $purchase->id)->get();
 
         // Returning success API response.
         return $this->success($prchase, 'Purchase with that id retrieved successfully.');
