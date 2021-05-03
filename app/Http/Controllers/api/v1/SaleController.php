@@ -152,7 +152,7 @@ class SaleController extends Controller
         }
 
         // Getting selected sale along with sale's details and general entry.
-        $sle = Sale::with(['coa_detail', 'coa_detail_payment', 'sale_details', 'general_entry'])->where('id', $sale->id)->get();
+        $sle = Sale::with(['coa_detail', 'coa_detail_payment', 'sale_details', 'general_entry'])->where('id', $sale->id);
 
         // Returning success API response.
         return $this->success($sle, 'Sale with that id was retrieved successfully.');
@@ -171,9 +171,6 @@ class SaleController extends Controller
             'rincian_akun_pembayaran_id' => 'required|numeric|exists:chart_of_account_details,id',
             'tanggal' => 'required|date',
             'keterangan' => 'required|string|max:255',
-            'barang_id.*' => 'required|numeric|exists:items,id',
-            'kuantitas.*' => 'required|numeric',
-            'harga_satuan.*' => 'required|numeric',
         ]);
 
         // Validating selected items for authenticated user.
@@ -207,52 +204,18 @@ class SaleController extends Controller
                 'tanggal' => $attr['tanggal'],
             ]);
 
-            // Updating sale's details for selected sale and updating items' stock.
-            $total = 0;
-
-            for($i = 0; $i < count((array) $attr['barang_id']); $i++)
-            {
-                $currentItem = Item::select('stok')->where('id', $attr['barang_id'][$i])->first();
-                $currentSaleDetail = SaleDetail::select('kuantitas')->where('sale_id', $sale->id)->where('item_id', $attr['barang_id'][$i])->first();
-                $subtotal = $attr['kuantitas'][$i] * $attr['harga_satuan'][$i];
-
-                $saleDetail = SaleDetail::where('item_id', $attr['barang_id'][$i])->where('sale_id', $sale->id)->update([
-                    'item_id' => $attr['barang_id'][$i],
-                    'kuantitas'  => $attr['kuantitas'][$i],
-                    'harga_satuan' => $attr['harga_satuan'][$i],
-                    'subtotal' => $subtotal,
-                ]);
-
-                $updateStock = Item::where('id', $attr['barang_id'][$i])->update([
-                    'stok' => ($currentItem->stok + $currentSaleDetail->kuantitas) - $attr['kuantitas'][$i],
-                ]);
-
-                $total += $subtotal;
-            }
-
-            // Updating sale's amount for selected sale.
-            $updateSale = Sale::where('id', $sale->id)->update([
-                'total' => $total,
-            ]);
-
-            // Getting cash and stock from chart of account's detail.
-            $hppOnCoa = ChartOfAccountDetail::select('id')->where('nama_rincian_akun', 'Harga Pokok Penjualan')->first();
-            $stockOnCoa = ChartOfAccountDetail::select('id')->where('nama_rincian_akun', 'Persediaan Barang Dagang')->first();
-
             // Updating general entry for selected sale.
             $generalEntry = GeneralEntry::where('sale_id', $sale->id)->update([
                 'tanggal' => $attr['tanggal'],
             ]);
 
             // Updating general entry's details for selected sale.
-            $generalEntryDetailDebit = GeneralEntryDetail::where('sale_id', $sale->id)->where('kredit', 0)->where('chart_of_account_detail_id', '!=', $hppOnCoa->id)->update([
+            $generalEntryDetailDebit = GeneralEntryDetail::where('sale_id', $sale->id)->where('kredit', 0)->update([
                 'coa_detail_id' => $attr['rincian_akun_pembayaran_id'],
-                'debit' => $total,
             ]);
 
-            $generalEntryDetailKredit = GeneralEntryDetail::where('sale_id', $sale->id)->where('debit', 0)->where('chart_of_account_detail_id', '!=', $stockOnCoa->id)->update([
+            $generalEntryDetailKredit = GeneralEntryDetail::where('sale_id', $sale->id)->where('debit', 0)->update([
                 'coa_detail_id' => $attr['rincian_akun_id'],
-                'kredit' => $total,
             ]);
 
             // Getting and returning updated sale along with sale's details and general entry.

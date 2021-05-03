@@ -140,7 +140,7 @@ class PurchaseController extends Controller
         }
 
         // Getting selected purchase along with purchase's details and general entry.
-        $prchase = Purchase::with(['coa_detail', 'coa_detail_payment', 'purchase_details.item', 'general_entry'])->where('id', $purchase->id)->get();
+        $prchase = Purchase::with(['coa_detail', 'coa_detail_payment', 'purchase_details.item', 'general_entry'])->where('id', $purchase->id);
 
         // Returning success API response.
         return $this->success($prchase, 'Purchase with that id retrieved successfully.');
@@ -159,9 +159,6 @@ class PurchaseController extends Controller
             'rincian_akun_pembayaran_id' => 'required|numeric|exists:chart_of_account_details,id',
             'tanggal' => 'required|date',
             'keterangan' => 'required|string|max:255',
-            'barang_id.*' => 'required|numeric|exists:items,id',
-            'kuantitas.*' => 'required|numeric',
-            'harga_satuan.*' => 'required|numeric',
         ]);
 
         // Validating selected items for authenticated user.
@@ -184,45 +181,6 @@ class PurchaseController extends Controller
                 'tanggal' => $attr['tanggal'],
             ]);
 
-            // Updating purchase's details for selected purchase and updating items' stock.
-            $total = 0;
-
-            for($i = 0; $i < count((array) $attr['barang_id']); $i++)
-            {
-                $currentItem = Item::select('stok')->where('id', $attr['barang_id'][$i])->first();
-                $currentPurchaseDetail = PurchaseDetail::select('kuantitas', 'stok')->where('purchase_id', $purchase->id)->where('item_id', $attr['barang_id'][$i])->first();
-                $subtotal = $attr['kuantitas'][$i] * $attr['harga_satuan'][$i];
-
-                if ($attr['kuantitas'][$i] < $currentPurchaseDetail->kuantitas) {
-                    $difference = $currentPurchaseDetail->kuantitas - $attr['kuantitas'][$i];
-                    $newStock = $currentPurchaseDetail->stok - $difference;
-                } else if ($attr['kuantitas'][$i] > $currentPurchaseDetail->kuantitas) {
-                    $difference = $attr['kuantitas'][$i] - $currentPurchaseDetail->kuantitas;
-                    $newStock = $currentPurchaseDetail->stok + $difference;
-                } else {
-                    $newStock = $currentPurchaseDetail->stok;
-                }
-
-                $purchaseDetail = PurchaseDetail::where('item_id', $attr['barang_id'][$i])->where('purchase_id', $purchase->id)->update([
-                    'item_id' => $attr['barang_id'][$i],
-                    'kuantitas'  => $attr['kuantitas'][$i],
-                    'harga_satuan' => $attr['harga_satuan'][$i],
-                    'subtotal' => $subtotal,
-                    'stok' => $newStock,
-                ]);
-
-                $updateStock = Item::where('id', $attr['barang_id'][$i])->update([
-                    'stok' => ($currentItem->stok - $currentPurchaseDetail->kuantitas) + $attr['kuantitas'][$i],
-                ]);
-
-                $total += $subtotal;
-            }
-
-            // Updating purchase's amount for selected purchase.
-            $updatePurchase = Purchase::where('id', $purchase->id)->update([
-                'total' => $total,
-            ]);
-
             // Updating general entry for selected purchase.
             $generalEntry = GeneralEntry::where('purchase_id', $purchase->id)->update([
                 'tanggal' => $attr['tanggal'],
@@ -231,12 +189,10 @@ class PurchaseController extends Controller
             // Updating general entry's details for selected purchase.
             $generalEntryDetailDebit = GeneralEntryDetail::where('purchase_id', $purchase->id)->where('kredit', 0)->update([
                 'coa_detail_id' => $attr['rincian_akun_id'],
-                'debit' => $total,
             ]);
 
             $generalEntryDetailKredit = GeneralEntryDetail::where('purchase_id', $purchase->id)->where('debit', 0)->update([
                 'coa_detail_id' => $attr['rincian_akun_pembayaran_id'],
-                'kredit' => $total,
             ]);
 
             // Getting and returning updated purchase along with purchase's details and general entry.

@@ -101,7 +101,7 @@ class CashReceiptController extends Controller
         }
 
         // Getting selected cash receipt along with cash receipt's general entry.
-        $currentCashReceipt = CashReceipt::with(['coa_detail', 'general_entry'])->where($cashReceipt->id)->get();
+        $currentCashReceipt = CashReceipt::with(['coa_detail', 'general_entry'])->where($cashReceipt->id);
 
         // Returning success API response.
         return $this->success($currentCashReceipt, 'Data with that id was retrieved successfully.');

@@ -102,7 +102,7 @@ class CashPaymentController extends Controller
         }
 
         // Getting selected cash payment along with cash payment's general entry.
-        $currentCashPayment = CashPayment::with(['coa_detail', 'general_entry'])->where($cashPayment->id)->get();
+        $currentCashPayment = CashPayment::with(['coa_detail', 'general_entry'])->where($cashPayment->id);
 
         // Returning success API response.
         return $this->success($currentCashPayment, 'Cash payment with that id was retrieved successfully.');
