@@ -18,6 +18,6 @@ class PurchaseDetail extends Model
 
     public function item()
     {
-        return $this->hasOne(Item::class, 'item_id');
+        return $this->belongsTo(Item::class, 'item_id');
     }
 }
