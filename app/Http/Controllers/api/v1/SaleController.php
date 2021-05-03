@@ -173,27 +173,6 @@ class SaleController extends Controller
             'keterangan' => 'required|string|max:255',
         ]);
 
-        // Validating selected items for authenticated user.
-        for($i = 0; $i < count((array) $attr['barang_id']); $i++)
-        {
-            $currentItem = Item::select('user_id')->where('id', $attr['barang_id'][$i])->first();
-
-            if(Auth::id() != $currentItem->user_id){
-                return $this->error('Access was not allowed.', 403);
-            }
-        }
-
-        // Validating items' stocks.
-        for($i = 0; $i < count((array) $attr['barang_id']); $i++)
-        {
-            $currentItem = Item::select('id', 'nama_barang', 'stok')->where('id', $attr['barang_id'][$i])->first();
-            $qty = $attr['kuantitas'][$i];
-
-            if (!($qty <= $currentItem->stok)) {
-                return $this->error('Stock is not enough, stock for ' . $currentItem->nama_barang . ' is only ' . $currentItem->stok, 422);
-            }
-        }
-
         // Beginning database transaction.
         $transaction = DB::transaction(function () use ($attr, $sale) {
             // Updating selected sale.
