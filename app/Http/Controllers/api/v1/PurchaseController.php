@@ -171,17 +171,20 @@ class PurchaseController extends Controller
                 'tanggal' => $attr['tanggal'],
             ]);
 
+            // Getting general entry for selected purchase.
+            $generalEntry = GeneralEntry::select('id')->where('purchase_id', $purchase->id)->first();
+
             // Updating general entry for selected purchase.
-            $generalEntry = GeneralEntry::where('purchase_id', $purchase->id)->update([
+            $updateGeneralEntry = GeneralEntry::where('id', $generalEntry->id)->update([
                 'tanggal' => $attr['tanggal'],
             ]);
 
             // Updating general entry's details for selected purchase.
-            $generalEntryDetailDebit = GeneralEntryDetail::where('purchase_id', $purchase->id)->where('kredit', 0)->update([
+            $generalEntryDetailDebit = GeneralEntryDetail::where('general_entry_id', $generalEntry->id)->where('kredit', 0)->update([
                 'coa_detail_id' => $attr['rincian_akun_id'],
             ]);
 
-            $generalEntryDetailKredit = GeneralEntryDetail::where('purchase_id', $purchase->id)->where('debit', 0)->update([
+            $generalEntryDetailKredit = GeneralEntryDetail::where('general_entry_id', $generalEntry->id)->where('debit', 0)->update([
                 'coa_detail_id' => $attr['rincian_akun_pembayaran_id'],
             ]);
 

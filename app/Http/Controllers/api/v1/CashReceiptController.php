@@ -132,18 +132,21 @@ class CashReceiptController extends Controller
                 'tanggal' => $attr['tanggal'],
             ]);
 
+            // Getting general entry for selected cash receipt.
+            $generalEntry = GeneralEntry::select('id')->where('cash_payment_id', $cashReceipt->id)->first();
+
             // Updating general entry for selected cash receipt.
-            $generalEntry = GeneralEntry::where('cash_receipt_id', $cashReceipt->id)->update([
+            $generalEntry = GeneralEntry::where('id', $generalEntry->id)->update([
                 'tanggal' => $attr['tanggal'],
             ]);
 
             // Updating general entry's details for selected cash receipt.
-            $generalEntryDetailDebit = GeneralEntryDetail::where('cash_receipt_id', $cashReceipt->id)->where('kredit', 0)->update([
+            $generalEntryDetailDebit = GeneralEntryDetail::where('id', $generalEntry->id)->where('kredit', 0)->update([
                 'coa_detail_id' => $attr['rincian_akun_id'],
                 'debit' => $attr['nominal'],
             ]);
 
-            $generalEntryDetailKredit = GeneralEntryDetail::where('cash_receipt_id', $cashReceipt->id)->where('debit', 0)->update([
+            $generalEntryDetailKredit = GeneralEntryDetail::where('id', $generalEntry->id)->where('debit', 0)->update([
                 'kredit' => $attr['nominal'],
             ]);
 
