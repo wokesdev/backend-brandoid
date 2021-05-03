@@ -161,16 +161,6 @@ class PurchaseController extends Controller
             'keterangan' => 'required|string|max:255',
         ]);
 
-        // Validating selected items for authenticated user.
-        for($i = 0; $i < count((array) $attr['barang_id']); $i++)
-        {
-            $currentItem = Item::select('user_id')->where('id', $attr['barang_id'][$i])->first();
-
-            if(Auth::id() != $currentItem->user_id){
-                return $this->error('Access was not allowed.', 403);
-            }
-        }
-
         // Beginning database transaction.
         $transaction = DB::transaction(function () use ($attr, $purchase) {
             // Updating selected purchase.
