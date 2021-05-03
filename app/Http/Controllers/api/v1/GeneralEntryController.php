@@ -84,7 +84,7 @@ class GeneralEntryController extends Controller
         }
 
         // Getting selected general entry along with general entry's details.
-        $gnrlEntry = GeneralEntry::with('general_entry_details')->where('id', $generalEntry->id)->get();
+        $gnrlEntry = GeneralEntry::with('general_entry_details')->findOrFail($generalEntry->id);
 
         // Returning success API response.
         return $this->success($gnrlEntry, 'General entry with that id was retrieved successfully.');

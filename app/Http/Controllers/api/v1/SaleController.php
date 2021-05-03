@@ -152,7 +152,7 @@ class SaleController extends Controller
         }
 
         // Getting selected sale along with sale's details and general entry.
-        $sle = Sale::with(['coa_detail', 'coa_detail_payment', 'sale_details', 'general_entry'])->where('id', $sale->id);
+        $sle = Sale::with(['coa_detail', 'coa_detail_payment', 'sale_details', 'general_entry'])->findOrFail($sale->id);
 
         // Returning success API response.
         return $this->success($sle, 'Sale with that id was retrieved successfully.');
