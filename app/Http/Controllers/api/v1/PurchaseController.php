@@ -22,7 +22,7 @@ class PurchaseController extends Controller
     public function index()
     {
         // Getting all purchases along with purchase's details and general entry.
-        $purchases = Purchase::with(['purchase_details', 'general_entry'])->where('user_id', Auth::id())->get();
+        $purchases = Purchase::with(['coa_detail', 'coa_detail_payment', 'purchase_details', 'general_entry'])->where('user_id', Auth::id())->get();
 
         // Returning success API response.
         return $this->success($purchases, 'All purchases was retrieved successfully.');
