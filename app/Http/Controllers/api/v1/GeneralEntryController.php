@@ -161,10 +161,14 @@ class GeneralEntryController extends Controller
             $generalEntries = GeneralEntry::where('user_id', Auth::id())->whereDate('tanggal', $attr['from_date'])->pluck('id');
 
             // Getting all general entries' details along with general entry's and chart of account's details.
-            $generalEntryDetails = GeneralEntryDetail::with(['general_entry', 'coa_detail'])->whereIn('general_entry_id', $generalEntries)->get();;
+            $generalEntryDetails = GeneralEntryDetail::with(['general_entry', 'coa_detail'])->whereIn('general_entry_id', $generalEntries)->get();
+
+            // Counting total of debit and credit.
+            $sumDebit = GeneralEntryDetail::whereIn('general_entry_id', $generalEntries)->sum('debit');
+            $sumKredit = GeneralEntryDetail::whereIn('general_entry_id', $generalEntries)->sum('kredit');
 
             // Returning success API response.
-            return $this->success($generalEntryDetails, "All general entry's details with selected date was retrieved successfully.");
+            return $this->success([$generalEntryDetails, $sumDebit, $sumKredit], "All general entry's details with selected date was retrieved successfully.");
         }
 
         else {
@@ -172,10 +176,14 @@ class GeneralEntryController extends Controller
             $generalEntries = GeneralEntry::where('user_id', Auth::id())->whereBetween('tanggal', array($attr['from_date'], $attr['to_date']))->pluck('id');
 
             // Getting all general entries' details along with general entry's and chart of account's details.
-            $generalEntryDetails = GeneralEntryDetail::with(['general_entry', 'coa_detail'])->whereIn('general_entry_id', $generalEntries)->get();;
+            $generalEntryDetails = GeneralEntryDetail::with(['general_entry', 'coa_detail'])->whereIn('general_entry_id', $generalEntries)->get();
+
+            // Counting total of debit and credit.
+            $sumDebit = GeneralEntryDetail::whereIn('general_entry_id', $generalEntries)->sum('debit');
+            $sumKredit = GeneralEntryDetail::whereIn('general_entry_id', $generalEntries)->sum('kredit');
 
             // Returning success API response.
-            return $this->success($generalEntryDetails, "All general entry's details with selected date was retrieved successfully.");
+            return $this->success([$generalEntryDetails, $sumDebit, $sumKredit], "All general entry's details with selected date was retrieved successfully.");
         }
     }
 }
