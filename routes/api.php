@@ -53,6 +53,8 @@ Route::middleware('auth:sanctum')->namespace('api\v1')->prefix('v1')->group(func
     Route::get('/cash-payment-count', 'DashboardController@cashPaymentCount');
     Route::get('/cash-receipt-count', 'DashboardController@cashReceiptCount');
 
+    Route::get('/general-entry-filter', 'GeneralEntryController@filterDate');
+
     Route::get('/me', 'AuthController@profile');
 
     Route::post('/auth/logout', 'AuthController@logout');
