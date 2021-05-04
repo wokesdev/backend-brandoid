@@ -157,19 +157,25 @@ class GeneralEntryController extends Controller
         ]);
 
         if ($attr['from_date'] === $attr['to_date']) {
-            // Getting all general entries along with general entry's details.
-            $generalEntries = GeneralEntryDetail::with(['general_entry', 'coa_detail'])->where('user_id', Auth::id())->whereDate('tanggal', $attr['from_date'])->get();;
+            // Getting all general entries for authenticated user.
+            $generalEntries = GeneralEntry::where('user_id', Auth::id())->pluck('id');
+
+            // Getting all general entries' details along with general entry's and chart of account's details.
+            $generalEntryDetails = GeneralEntryDetail::with(['general_entry', 'coa_detail'])->whereIn('general_entry_id', $generalEntries)->whereDate('tanggal', $attr['from_date'])->get();;
 
             // Returning success API response.
-            return $this->success($generalEntries, 'All general entries with selected date was retrieved successfully.');
+            return $this->success($generalEntryDetails, 'All general entries with selected date was retrieved successfully.');
         }
 
         else {
-            // Getting all general entries along with general entry's details.
-            $generalEntries = GeneralEntryDetail::with(['general_entry', 'coa_detail'])->where('user_id', Auth::id())->whereBetween('tanggal', array($attr['from_date'], $attr['to_date']))->get();;
+            // Getting all general entries for authenticated user.
+            $generalEntries = GeneralEntry::where('user_id', Auth::id())->pluck('id');
+
+            // Getting all general entries' details along with general entry's and chart of account's details.
+            $generalEntryDetails = GeneralEntryDetail::with(['general_entry', 'coa_detail'])->whereIn('general_entry_id', $generalEntries)->whereBetween('tanggal', array($attr['from_date'], $attr['to_date']))->get();;
 
             // Returning success API response.
-            return $this->success($generalEntries, 'All general entries with selected date was retrieved successfully.');
+            return $this->success($generalEntryDetails, 'All general entries with selected date was retrieved successfully.');
         }
     }
 }
