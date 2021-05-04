@@ -13,7 +13,7 @@ class GeneralEntryDetail extends Model
 
     public function general_entry()
     {
-        return $this->belongsTo(GeneralEntryDetail::class, 'general_entry_id');
+        return $this->belongsTo(GeneralEntry::class, 'general_entry_id');
     }
 
     public function coa_detail()
