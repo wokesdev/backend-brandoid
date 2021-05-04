@@ -147,4 +147,29 @@ class GeneralEntryController extends Controller
          // Returning success API response.
          return $this->success(null, 'General entry was deleted successfully.');
     }
+
+    public function filterDate(Request $request)
+    {
+        // Validating incoming request.
+        $attr = $request->validate([
+            'from_date' => 'required|date',
+            'to_date' => 'required|date',
+        ]);
+
+        if ($attr['from_date'] === $attr['to_date']) {
+            // Getting all general entries along with general entry's details.
+            $generalEntries = GeneralEntry::with('general_entry_details')->where('user_id', Auth::id())->whereDate('tanggal', $attr['from_date'])->get();;
+
+            // Returning success API response.
+            return $this->success($generalEntries, 'All general entries with selected date was retrieved successfully.');
+        }
+
+        else {
+            // Getting all general entries along with general entry's details.
+            $generalEntries = GeneralEntry::with('general_entry_details')->where('user_id', Auth::id())->whereBetween('tanggal', array($attr['from_date'], $attr['to_date']))->get();;
+
+            // Returning success API response.
+            return $this->success($generalEntries, 'All general entries with selected date was retrieved successfully.');
+        }
+    }
 }
