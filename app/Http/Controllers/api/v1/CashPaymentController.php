@@ -62,6 +62,7 @@ class CashPaymentController extends Controller
                 'cash_payment_id' => $cashPayment->id,
                 'nomor_transaksi' => '',
                 'tanggal' => $attr['tanggal'],
+                'keterangan' => $attr['keterangan'],
             ]);
 
             // Updating transaction's number for the new general entry.
@@ -139,6 +140,7 @@ class CashPaymentController extends Controller
             // Updating general entry for selected cash payment.
             $updateGeneralEntry = GeneralEntry::where('id', $generalEntry->id)->update([
                 'tanggal' => $attr['tanggal'],
+                'keterangan' => $attr['keterangan'],
             ]);
 
             // Updating general entry's details for selected cash payment.

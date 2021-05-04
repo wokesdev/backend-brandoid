@@ -112,6 +112,7 @@ class SaleController extends Controller
                 'sale_id' => $sale->id,
                 'nomor_transaksi' => '',
                 'tanggal' => $attr['tanggal'],
+                'keterangan' => $attr['keterangan'],
             ]);
 
             // Updating transaction's number for the new general entry.
@@ -189,6 +190,7 @@ class SaleController extends Controller
             // Updating general entry for selected sale.
             $updateGeneralEntry = GeneralEntry::where('id', $generalEntry->id)->update([
                 'tanggal' => $attr['tanggal'],
+                'keterangan' => $attr['keterangan'],
             ]);
 
             // Updating general entry's details for selected sale.

@@ -32,8 +32,7 @@ class GeneralEntryController extends Controller
             'keterangan' => 'required|string|max:255',
             'rincian_akun_debit_id' => 'required|numeric|exists:chart_of_account_details,id',
             'rincian_akun_kredit_id' => 'required|numeric|exists:chart_of_account_details,id',
-            'debit' => 'required|numeric',
-            'kredit' => 'required|numeric',
+            'nominal' => 'required|numeric',
         ]);
 
         // Beginning database transaction.
@@ -55,7 +54,7 @@ class GeneralEntryController extends Controller
             $generalEntryDetailDebit = GeneralEntryDetail::create([
                 'general_entry_id' => $generalEntry->id,
                 'coa_detail_id' => $attr['rincian_akun_debit_id'],
-                'debit' => $attr['debit'],
+                'debit' => $attr['nominal'],
                 'kredit' => 0,
             ]);
 
@@ -63,7 +62,7 @@ class GeneralEntryController extends Controller
                 'general_entry_id' => $generalEntry->id,
                 'coa_detail_id' => $attr['rincian_akun_kredit_id'],
                 'debit' => 0,
-                'kredit' => $attr['kredit'],
+                'kredit' => $attr['nominal'],
             ]);
 
             // Getting and returning the new general entry along with general entry's details.
@@ -103,8 +102,7 @@ class GeneralEntryController extends Controller
             'keterangan' => 'required|string|max:255',
             'rincian_akun_debit_id' => 'required|numeric|exists:chart_of_account_details,id',
             'rincian_akun_kredit_id' => 'required|numeric|exists:chart_of_account_details,id',
-            'debit' => 'required|numeric',
-            'kredit' => 'required|numeric',
+            'nominal' => 'required|numeric',
         ]);
 
         // Beginning database transaction.
@@ -118,12 +116,12 @@ class GeneralEntryController extends Controller
             // Updating general entry's details for selected general entry.
             $generalEntryDetailDebit = GeneralEntryDetail::where('general_entry_id', $generalEntry->id)->where('kredit', 0)->update([
                 'coa_detail_id' => $attr['rincian_akun_debit_id'],
-                'debit' => $attr['debit'],
+                'debit' => $attr['nominal'],
             ]);
 
             $generalEntryDetailKredit = GeneralEntryDetail::where('general_entry_id', $generalEntry->id)->where('debit', 0)->update([
                 'coa_detail_id' => $attr['rincian_akun_kredit_id'],
-                'debit' => $attr['kredit'],
+                'kredit' => $attr['nominal'],
             ]);
 
             // Getting and returning updated general entry along with general entry's details.

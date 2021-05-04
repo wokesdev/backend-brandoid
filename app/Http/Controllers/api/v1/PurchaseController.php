@@ -100,6 +100,7 @@ class PurchaseController extends Controller
                 'purchase_id' => $purchase->id,
                 'nomor_transaksi' => '',
                 'tanggal' => $attr['tanggal'],
+                'keterangan' => $attr['keterangan'],
             ]);
 
             // Updating transaction's number for the new general entry.
@@ -177,6 +178,7 @@ class PurchaseController extends Controller
             // Updating general entry for selected purchase.
             $updateGeneralEntry = GeneralEntry::where('id', $generalEntry->id)->update([
                 'tanggal' => $attr['tanggal'],
+                'keterangan' => $attr['keterangan'],
             ]);
 
             // Updating general entry's details for selected purchase.

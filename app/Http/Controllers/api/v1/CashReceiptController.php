@@ -62,6 +62,7 @@ class CashReceiptController extends Controller
                 'cash_receipt_id' => $cashReceipt->id,
                 'nomor_transaksi' => '',
                 'tanggal' => $attr['tanggal'],
+                'keterangan' => $attr['keterangan'],
             ]);
 
             // Updating transaction's number for the new general entry.
@@ -104,7 +105,7 @@ class CashReceiptController extends Controller
         $currentCashReceipt = CashReceipt::with(['coa_detail', 'general_entry'])->findOrFail($cashReceipt->id);
 
         // Returning success API response.
-        return $this->success($currentCashReceipt, 'Data with that id was retrieved successfully.');
+        return $this->success($currentCashReceipt, 'Cash receipt with that id was retrieved successfully.');
     }
 
     public function update(Request $request, CashReceipt $cashReceipt)
@@ -138,6 +139,7 @@ class CashReceiptController extends Controller
             // Updating general entry for selected cash receipt.
             $updateGeneralEntry = GeneralEntry::where('id', $generalEntry->id)->update([
                 'tanggal' => $attr['tanggal'],
+                'keterangan' => $attr['keterangan'],
             ]);
 
             // Updating general entry's details for selected cash receipt.
@@ -157,7 +159,7 @@ class CashReceiptController extends Controller
         });
 
         // Returning success API response.
-        return $this->success($transaction, 'Data updated was successfully.');
+        return $this->success($transaction, 'Cash receipt was updated successfully.');
     }
 
     public function destroy(CashReceipt $cashReceipt)
@@ -171,6 +173,6 @@ class CashReceiptController extends Controller
         $deleteCashReceipt = CashReceipt::where('id', $cashReceipt->id)->delete();
 
         // Returning success API response.
-        return $this->success(null, 'Data deleted was successfully.');
+        return $this->success(null, 'Cash receipt was deleted successfully.');
     }
 }
