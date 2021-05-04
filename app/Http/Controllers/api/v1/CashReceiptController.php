@@ -136,7 +136,7 @@ class CashReceiptController extends Controller
             $generalEntry = GeneralEntry::select('id')->where('cash_payment_id', $cashReceipt->id)->first();
 
             // Updating general entry for selected cash receipt.
-            $generalEntry = GeneralEntry::where('id', $generalEntry->id)->update([
+            $updateGeneralEntry = GeneralEntry::where('id', $generalEntry->id)->update([
                 'tanggal' => $attr['tanggal'],
             ]);
 
