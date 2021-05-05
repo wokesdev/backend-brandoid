@@ -51,6 +51,7 @@ Route::middleware('auth:sanctum')->namespace('api\v1')->prefix('v1')->group(func
 
     Route::post('/general-entry-filter', 'GeneralEntryController@filterDate');
     Route::post('/income-statement-filter', 'IncomeStatementController@filterDate');
+    Route::post('/income-statement-filter-based', 'IncomeStatementController@filterDateBased');
 
     Route::get('/me', 'AuthController@profile');
 

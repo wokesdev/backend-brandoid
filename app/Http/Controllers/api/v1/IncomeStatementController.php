@@ -120,4 +120,38 @@ class IncomeStatementController extends Controller
             'laba_bersih' => $labaBersih
         ], 'All income statements was retrieved successfully.');
     }
+
+    public function filterDateBased(Request $request)
+    {
+        // Validating incoming request.
+        $attr = $request->validate([
+            'rincian_akun_id' => 'required|numeric|exists:chart_of_account_details,id',
+            'from_date' => 'required|date',
+            'to_date' => 'required|date',
+        ]);
+
+        if ($attr['from_date'] === $attr['to_date']) {
+            // Getting all general entries for authenticated user and selected date.
+            $generalEntries = GeneralEntry::where('user_id', Auth::id())->whereDate('tanggal', $attr['from_date'])->pluck('id');
+
+            // Summing credit and debit for selected date and chart of account's detail.
+            $sumDebitBased = GeneralEntryDetail::where('coa_detail_id', $attr['rincian_akun_id'])->whereIn('general_entry_id', $generalEntries)->sum('debit');
+            $sumKreditBased = GeneralEntryDetail::where('coa_detail_id', $attr['rincian_akun_id'])->whereIn('general_entry_id', $generalEntries)->sum('kredit');
+        }
+
+        else {
+            // Getting all general entries for authenticated user and selected date.
+            $generalEntries = GeneralEntry::where('user_id', Auth::id())->whereBetween('tanggal', array($attr['from_date'], $attr['to_date']))->pluck('id');
+
+            // Summing credit and debit for selected date and chart of account's detail.
+            $sumDebitBased = GeneralEntryDetail::where('coa_detail_id', $attr['rincian_akun_id'])->whereIn('general_entry_id', $generalEntries)->sum('debit');
+            $sumKreditBased = GeneralEntryDetail::where('coa_detail_id', $attr['rincian_akun_id'])->whereIn('general_entry_id', $generalEntries)->sum('kredit');
+        }
+
+        // Returning success API response.
+        return $this->success([
+            'sum_kredit_based' => $sumDebitBased,
+            'sum_debit_based' => $sumKreditBased
+        ], 'All credit and debit for selected date and chart of account was retrieved successfully.');
+    }
 }
