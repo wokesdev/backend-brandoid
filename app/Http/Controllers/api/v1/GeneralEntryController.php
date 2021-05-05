@@ -166,13 +166,6 @@ class GeneralEntryController extends Controller
             // Counting total of debit and credit.
             $sumDebit = GeneralEntryDetail::whereIn('general_entry_id', $generalEntries)->sum('debit');
             $sumKredit = GeneralEntryDetail::whereIn('general_entry_id', $generalEntries)->sum('kredit');
-
-            // Returning success API response.
-            return $this->success([
-                'general_entry_details' => $generalEntryDetails,
-                'sum_debit' => $sumDebit,
-                'sum_kredit' => $sumKredit
-            ], "All general entry's details with selected date was retrieved successfully.");
         }
 
         else {
@@ -185,13 +178,13 @@ class GeneralEntryController extends Controller
             // Counting total of debit and credit.
             $sumDebit = GeneralEntryDetail::whereIn('general_entry_id', $generalEntries)->sum('debit');
             $sumKredit = GeneralEntryDetail::whereIn('general_entry_id', $generalEntries)->sum('kredit');
-
-            // Returning success API response.
-            return $this->success([
-                'general_entry_details' => $generalEntryDetails,
-                'sum_debit' => $sumDebit,
-                'sum_kredit' => $sumKredit
-            ], "All general entry's details with selected date was retrieved successfully.");
         }
+
+        // Returning success API response.
+        return $this->success([
+            'general_entry_details' => $generalEntryDetails,
+            'sum_debit' => $sumDebit,
+            'sum_kredit' => $sumKredit
+        ], "All general entry's details with selected date was retrieved successfully.");
     }
 }

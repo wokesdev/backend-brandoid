@@ -44,16 +44,13 @@ Route::middleware('auth:sanctum')->namespace('api\v1')->prefix('v1')->group(func
     Route::resource('/cash-receipt', 'CashReceiptController')->except('create', 'edit');
     Route::resource('/general-entry', 'GeneralEntryController')->except('create', 'edit');
 
-    Route::get('/income-statement', 'IncomeStatementController@index');
-    Route::post('/income-statement', 'IncomeStatementController@filterDate');
-    Route::post('/income-statement-print', 'IncomeStatementController@printReport');
-
     Route::get('/purchase-count', 'DashboardController@purchaseCount');
     Route::get('/sale-count', 'DashboardController@saleCount');
     Route::get('/cash-payment-count', 'DashboardController@cashPaymentCount');
     Route::get('/cash-receipt-count', 'DashboardController@cashReceiptCount');
 
     Route::post('/general-entry-filter', 'GeneralEntryController@filterDate');
+    Route::post('/income-statement-filter', 'IncomeStatementController@filterDate');
 
     Route::get('/me', 'AuthController@profile');
 
