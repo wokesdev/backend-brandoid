@@ -41,20 +41,17 @@ class IncomeStatementController extends Controller
             $whereIsBiayaOperasionalDetail = ChartOfAccountDetail::where('chart_of_account_id', $whereIsBiayaOperasional->id)->pluck('id')->toArray();
             $whereIsBiayaLainDetail = ChartOfAccountDetail::where('chart_of_account_id', $whereIsBiayaLain->id)->pluck('id')->toArray();
 
-            // Getting general entries' id for authenticated user.
-            $authUserGeneralEntry = GeneralEntry::where('user_id', Auth::id())->pluck('id')->toArray();
-
             // Getting general entry's details for sales, other incomes, operational costs, and other costs.
-            $penjualanGeneralEntryDetails = GeneralEntryDetail::whereIn('general_entry_id', $authUserGeneralEntry)->whereIn('coa_detail_id', $whereIsPenjualanDetail)->whereIn('general_entry_id', $generalEntries)->orderBy('coa_detail_id')->groupBy('coa_detail_id')->get();
-            $pendapatanLainGeneralEntryDetails = GeneralEntryDetail::whereIn('general_entry_id', $authUserGeneralEntry)->whereIn('coa_detail_id', $whereIsPendapatanLainDetail)->whereIn('general_entry_id', $generalEntries)->orderBy('coa_detail_id')->groupBy('coa_detail_id')->get();
-            $biayaOperasionalGeneralEntryDetails = GeneralEntryDetail::whereIn('general_entry_id', $authUserGeneralEntry)->whereIn('coa_detail_id', $whereIsBiayaOperasionalDetail)->whereIn('general_entry_id', $generalEntries)->orderBy('coa_detail_id')->groupBy('coa_detail_id')->get();
-            $biayaLainGeneralEntryDetails = GeneralEntryDetail::whereIn('general_entry_id', $authUserGeneralEntry)->whereIn('coa_detail_id', $whereIsBiayaLainDetail)->whereIn('general_entry_id', $generalEntries)->orderBy('coa_detail_id')->groupBy('coa_detail_id')->get();
+            $penjualanGeneralEntryDetails = GeneralEntryDetail::with(['general_entry', 'coa_detail'])->whereIn('coa_detail_id', $whereIsPenjualanDetail)->whereIn('general_entry_id', $generalEntries)->orderBy('coa_detail_id')->groupBy('coa_detail_id')->get();
+            $pendapatanLainGeneralEntryDetails = GeneralEntryDetail::with(['general_entry', 'coa_detail'])->whereIn('coa_detail_id', $whereIsPendapatanLainDetail)->whereIn('general_entry_id', $generalEntries)->orderBy('coa_detail_id')->groupBy('coa_detail_id')->get();
+            $biayaOperasionalGeneralEntryDetails = GeneralEntryDetail::with(['general_entry', 'coa_detail'])->whereIn('coa_detail_id', $whereIsBiayaOperasionalDetail)->whereIn('general_entry_id', $generalEntries)->orderBy('coa_detail_id')->groupBy('coa_detail_id')->get();
+            $biayaLainGeneralEntryDetails = GeneralEntryDetail::with(['general_entry', 'coa_detail'])->whereIn('coa_detail_id', $whereIsBiayaLainDetail)->whereIn('general_entry_id', $generalEntries)->orderBy('coa_detail_id')->groupBy('coa_detail_id')->get();
 
             // Summing credit and debit for sales, other incomes, operational costs, and other costs.
-            $sumPenjualan = GeneralEntryDetail::whereIn('general_entry_id', $authUserGeneralEntry)->whereIn('coa_detail_id', $whereIsPenjualanDetail)->whereIn('general_entry_id', $generalEntries)->sum('kredit');
-            $sumPendapatanLain = GeneralEntryDetail::whereIn('general_entry_id', $authUserGeneralEntry)->whereIn('coa_detail_id', $whereIsPendapatanLainDetail)->whereIn('general_entry_id', $generalEntries)->sum('kredit');
-            $sumBiayaOperasional = GeneralEntryDetail::whereIn('general_entry_id', $authUserGeneralEntry)->whereIn('coa_detail_id', $whereIsBiayaOperasionalDetail)->whereIn('general_entry_id', $generalEntries)->sum('debit');
-            $sumBiayaLain = GeneralEntryDetail::whereIn('general_entry_id', $authUserGeneralEntry)->whereIn('coa_detail_id', $whereIsBiayaLainDetail)->whereIn('general_entry_id', $generalEntries)->sum('debit');
+            $sumPenjualan = GeneralEntryDetail::whereIn('coa_detail_id', $whereIsPenjualanDetail)->whereIn('general_entry_id', $generalEntries)->sum('kredit');
+            $sumPendapatanLain = GeneralEntryDetail::whereIn('coa_detail_id', $whereIsPendapatanLainDetail)->whereIn('general_entry_id', $generalEntries)->sum('kredit');
+            $sumBiayaOperasional = GeneralEntryDetail::whereIn('coa_detail_id', $whereIsBiayaOperasionalDetail)->whereIn('general_entry_id', $generalEntries)->sum('debit');
+            $sumBiayaLain = GeneralEntryDetail::whereIn('coa_detail_id', $whereIsBiayaLainDetail)->whereIn('general_entry_id', $generalEntries)->sum('debit');
 
             // Counting the net profit.
             $labaBersih = ($sumPenjualan + $sumPendapatanLain) - ($sumBiayaOperasional + $sumBiayaLain);
@@ -83,20 +80,17 @@ class IncomeStatementController extends Controller
             $whereIsBiayaOperasionalDetail = ChartOfAccountDetail::where('chart_of_account_id', $whereIsBiayaOperasional->id)->pluck('id')->toArray();
             $whereIsBiayaLainDetail = ChartOfAccountDetail::where('chart_of_account_id', $whereIsBiayaLain->id)->pluck('id')->toArray();
 
-            // Getting general entries' id for authenticated user.
-            $authUserGeneralEntry = GeneralEntry::where('user_id', Auth::id())->pluck('id')->toArray();
-
             // Getting general entry's details for sales, other incomes, operational costs, and other costs.
-            $penjualanGeneralEntryDetails = GeneralEntryDetail::whereIn('general_entry_id', $authUserGeneralEntry)->whereIn('coa_detail_id', $whereIsPenjualanDetail)->whereIn('general_entry_id', $generalEntries)->orderBy('coa_detail_id')->groupBy('coa_detail_id')->get();
-            $pendapatanLainGeneralEntryDetails = GeneralEntryDetail::whereIn('general_entry_id', $authUserGeneralEntry)->whereIn('coa_detail_id', $whereIsPendapatanLainDetail)->whereIn('general_entry_id', $generalEntries)->orderBy('coa_detail_id')->groupBy('coa_detail_id')->get();
-            $biayaOperasionalGeneralEntryDetails = GeneralEntryDetail::whereIn('general_entry_id', $authUserGeneralEntry)->whereIn('coa_detail_id', $whereIsBiayaOperasionalDetail)->whereIn('general_entry_id', $generalEntries)->orderBy('coa_detail_id')->groupBy('coa_detail_id')->get();
-            $biayaLainGeneralEntryDetails = GeneralEntryDetail::whereIn('general_entry_id', $authUserGeneralEntry)->whereIn('coa_detail_id', $whereIsBiayaLainDetail)->whereIn('general_entry_id', $generalEntries)->orderBy('coa_detail_id')->groupBy('coa_detail_id')->get();
+            $penjualanGeneralEntryDetails = GeneralEntryDetail::with(['general_entry', 'coa_detail'])->whereIn('coa_detail_id', $whereIsPenjualanDetail)->whereIn('general_entry_id', $generalEntries)->orderBy('coa_detail_id')->groupBy('coa_detail_id')->get();
+            $pendapatanLainGeneralEntryDetails = GeneralEntryDetail::with(['general_entry', 'coa_detail'])->whereIn('coa_detail_id', $whereIsPendapatanLainDetail)->whereIn('general_entry_id', $generalEntries)->orderBy('coa_detail_id')->groupBy('coa_detail_id')->get();
+            $biayaOperasionalGeneralEntryDetails = GeneralEntryDetail::with(['general_entry', 'coa_detail'])->whereIn('coa_detail_id', $whereIsBiayaOperasionalDetail)->whereIn('general_entry_id', $generalEntries)->orderBy('coa_detail_id')->groupBy('coa_detail_id')->get();
+            $biayaLainGeneralEntryDetails = GeneralEntryDetail::with(['general_entry', 'coa_detail'])->whereIn('coa_detail_id', $whereIsBiayaLainDetail)->whereIn('general_entry_id', $generalEntries)->orderBy('coa_detail_id')->groupBy('coa_detail_id')->get();
 
             // Summing credit and debit for sales, other incomes, operational costs, and other costs.
-            $sumPenjualan = GeneralEntryDetail::whereIn('general_entry_id', $authUserGeneralEntry)->whereIn('coa_detail_id', $whereIsPenjualanDetail)->whereIn('general_entry_id', $generalEntries)->sum('kredit');
-            $sumPendapatanLain = GeneralEntryDetail::whereIn('general_entry_id', $authUserGeneralEntry)->whereIn('coa_detail_id', $whereIsPendapatanLainDetail)->whereIn('general_entry_id', $generalEntries)->sum('kredit');
-            $sumBiayaOperasional = GeneralEntryDetail::whereIn('general_entry_id', $authUserGeneralEntry)->whereIn('coa_detail_id', $whereIsBiayaOperasionalDetail)->whereIn('general_entry_id', $generalEntries)->sum('debit');
-            $sumBiayaLain = GeneralEntryDetail::whereIn('general_entry_id', $authUserGeneralEntry)->whereIn('coa_detail_id', $whereIsBiayaLainDetail)->whereIn('general_entry_id', $generalEntries)->sum('debit');
+            $sumPenjualan = GeneralEntryDetail::whereIn('coa_detail_id', $whereIsPenjualanDetail)->whereIn('general_entry_id', $generalEntries)->sum('kredit');
+            $sumPendapatanLain = GeneralEntryDetail::whereIn('coa_detail_id', $whereIsPendapatanLainDetail)->whereIn('general_entry_id', $generalEntries)->sum('kredit');
+            $sumBiayaOperasional = GeneralEntryDetail::whereIn('coa_detail_id', $whereIsBiayaOperasionalDetail)->whereIn('general_entry_id', $generalEntries)->sum('debit');
+            $sumBiayaLain = GeneralEntryDetail::whereIn('coa_detail_id', $whereIsBiayaLainDetail)->whereIn('general_entry_id', $generalEntries)->sum('debit');
 
             // Counting the net profit.
             $labaBersih = ($sumPenjualan + $sumPendapatanLain) - ($sumBiayaOperasional + $sumBiayaLain);
