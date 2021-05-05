@@ -86,13 +86,11 @@ class CoaDetailController extends Controller
     {
         // Validating incoming request.
         $attr = $request->validate([
-            'nomor_rincian_akun' => 'required|numeric|digits_between:1,4|unique:chart_of_account_details,nomor_rincian_akun,' . $coaDetail->id,
             'nama_rincian_akun' => 'required|string|max:255|unique:chart_of_account_details,nama_rincian_akun,' . $coaDetail->id
         ]);
 
         // Updating selected chart of account's detail.
         $updateChartOfAccountDetail = ChartOfAccountDetail::where('id', $coaDetail->id)->update([
-            'nomor_rincian_akun' => $attr['nomor_rincian_akun'],
             'nama_rincian_akun' => $attr['nama_rincian_akun'],
         ]);
 
