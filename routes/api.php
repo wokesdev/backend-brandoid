@@ -19,7 +19,7 @@ Route::namespace('api\v1')->prefix('v1')->group(function () {
     Route::post('/auth/login', 'AuthController@login');
 });
 
-Route::middleware(['auth:sanctum', 'is.admin'])->namespace('api\v1')->prefix('v1')->group(function () {
+Route::middleware(['auth:sanctum', 'is.admin', 'is.banned'])->namespace('api\v1')->prefix('v1')->group(function () {
     Route::resource('/coa', 'CoaController')->except('create', 'edit');
     Route::resource('/coa-detail', 'CoaDetailController')->except('create', 'edit');
 
@@ -34,7 +34,7 @@ Route::middleware(['auth:sanctum', 'is.admin'])->namespace('api\v1')->prefix('v1
     Route::get('/banned-count', 'DashboardController@bannedCount');
 });
 
-Route::middleware('auth:sanctum')->namespace('api\v1')->prefix('v1')->group(function () {
+Route::middleware(['auth:sanctum', 'is.banned'])->namespace('api\v1')->prefix('v1')->group(function () {
     Route::resource('/coa', 'CoaController')->except('create', 'store', 'edit', 'update', 'destroy');
     Route::resource('/coa-detail', 'CoaDetailController')->except('create', 'store', 'edit', 'update', 'destroy');
     Route::resource('/item', 'ItemController')->except('create', 'edit');
