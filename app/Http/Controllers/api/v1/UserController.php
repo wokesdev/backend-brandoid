@@ -29,6 +29,9 @@ class UserController extends Controller
             'is_admin' => true
         ]);
 
+        // Revoking current auth token for selected user.
+        $deleteToken = $user->tokens()->delete();
+
         // Returning success API response.
         return $this->success(null, 'Admin privilege was successfully given to the user.');
     }
@@ -50,6 +53,9 @@ class UserController extends Controller
         $banUser = User::where('id', $user->id)->update([
             'is_banned' => true
         ]);
+
+        // Revoking current auth token for selected user.
+        $deleteToken = $user->tokens()->delete();
 
         // Returning success API response.
         return $this->success(null, 'User was banned successfully.');
