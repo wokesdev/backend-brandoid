@@ -195,11 +195,11 @@ class SaleController extends Controller
 
             // Updating general entry's details for selected sale.
             $generalEntryDetailDebit = GeneralEntryDetail::where('general_entry_id', $generalEntry->id)->where('kredit', 0)->update([
-                'coa_detail_id' => $attr['rincian_akun_id'],
+                'coa_detail_id' => $attr['rincian_akun_pembayaran_id'],
             ]);
 
             $generalEntryDetailKredit = GeneralEntryDetail::where('general_entry_id', $generalEntry->id)->where('debit', 0)->update([
-                'coa_detail_id' => $attr['rincian_akun_pembayaran_id'],
+                'coa_detail_id' => $attr['rincian_akun_id'],
             ]);
 
             // Getting and returning updated sale along with sale's details and general entry.

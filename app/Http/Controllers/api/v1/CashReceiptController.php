@@ -73,14 +73,14 @@ class CashReceiptController extends Controller
             // Creating new general entry's details for the new general entry.
             $generalEntryDetailDebit = GeneralEntryDetail::create([
                 'general_entry_id' => $generalEntry->id,
-                'coa_detail_id' => $attr['rincian_akun_id'],
+                'coa_detail_id' => $cashOnCoa->id,
                 'debit' => $attr['nominal'],
                 'kredit' => 0,
             ]);
 
             $generalEntryDetailKredit = GeneralEntryDetail::create([
                 'general_entry_id' => $generalEntry->id,
-                'coa_detail_id' => $cashOnCoa->id,
+                'coa_detail_id' => $attr['rincian_akun_id'],
                 'debit' => 0,
                 'kredit' => $attr['nominal'],
             ]);
@@ -144,11 +144,11 @@ class CashReceiptController extends Controller
 
             // Updating general entry's details for selected cash receipt.
             $generalEntryDetailDebit = GeneralEntryDetail::where('id', $generalEntry->id)->where('kredit', 0)->update([
-                'coa_detail_id' => $attr['rincian_akun_id'],
                 'debit' => $attr['nominal'],
             ]);
 
             $generalEntryDetailKredit = GeneralEntryDetail::where('id', $generalEntry->id)->where('debit', 0)->update([
+                'coa_detail_id' => $attr['rincian_akun_id'],
                 'kredit' => $attr['nominal'],
             ]);
 
