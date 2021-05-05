@@ -150,8 +150,8 @@ class IncomeStatementController extends Controller
 
         // Returning success API response.
         return $this->success([
-            'sum_kredit_based' => $sumDebitBased,
-            'sum_debit_based' => $sumKreditBased
+            'sum_debit_based' => $sumDebitBased,
+            'sum_kredit_based' => $sumKreditBased
         ], 'All credit and debit for selected date and chart of account was retrieved successfully.');
     }
 }
