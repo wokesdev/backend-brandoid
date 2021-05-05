@@ -21,7 +21,7 @@ class IsBanned
     public function handle(Request $request, Closure $next)
     {
         if (Auth::user()->is_banned == 1) {
-            return $this->error('You are banned.', 401);
+            return $this->error('Banned.', 401);
         }
 
         else {
